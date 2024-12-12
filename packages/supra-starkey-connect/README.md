@@ -14,7 +14,7 @@ For an overview of the entire monorepo and example applications, please refer to
 
 ## Installation
 
-As part of a monorepo, `supra-starkey-connect` is managed via workspace dependencies. To install it within your project:
+To install supra-starkey-connect within your project:
 
 ```bash
 npm install supra-starkey-connect
