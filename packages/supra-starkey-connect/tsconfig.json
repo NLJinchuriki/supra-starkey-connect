@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+      "target": "ESNext",
+      "module": "ESNext",
+      "lib": ["DOM", "ESNext"],
+      "strict": true,
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "resolveJsonModule": true,
+      "isolatedModules": false,
+      "declaration": true,
+      "declarationDir": "dist",
+      "noEmit": true,
+      "forceConsistentCasingInFileNames": true,
+      "skipLibCheck": true
+    },
+    "include": ["lib", "__tests__"]
+  }

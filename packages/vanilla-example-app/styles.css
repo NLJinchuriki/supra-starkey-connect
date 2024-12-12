@@ -1,0 +1,267 @@
+/* Basic Resets */
+
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Prevent font size inflation */
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+/* Remove default margin in favour of better control in authored CSS */
+body, h1, h2, h3, h4, p,
+figure, blockquote, dl, dd {
+  margin-block-end: 0;
+}
+
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+}
+
+/* Set core body defaults */
+body {
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* Set shorter line heights on headings and interactive elements */
+h1, h2, h3, h4,
+button, input, label {
+  line-height: 1.1;
+}
+
+/* Balance text wrapping on headings */
+h1, h2,
+h3, h4 {
+  text-wrap: balance;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+  color: currentColor;
+}
+
+/* Make images easier to work with */
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
+
+/* Inherit fonts for inputs and buttons */
+input, button,
+textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Make sure textareas without a rows attribute are not tiny */
+textarea:not([rows]) {
+  min-height: 10em;
+}
+
+/* Anything that has been anchored to should have extra scroll margin */
+:target {
+  scroll-margin-block: 5ex;
+}
+
+
+/* Reset some default styles */
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Full-screen background with gradient */
+.app-container {
+  min-height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #7326A6 0%, #B02D6F 100%);
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Changed from center to flex-start */
+  color: #fff;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+/* Header styling */
+.app-header {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Wallet information styling */
+.wallet-info {
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 15px 20px;
+  border-radius: 3px;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 20px;
+}
+
+.wallet-info p {
+  margin: 8px 0;
+  font-size: 1rem;
+  overflow-wrap: break-word; 
+  word-wrap: break-word;    
+  word-break: break-word;   
+  white-space: normal;   
+}
+
+/* Button group styling */
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* Button styling */
+.btn {
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #BDD2EB;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  min-width: 150px;
+}
+
+.btn:disabled {
+  background-color: #7e7e7e;
+  cursor: not-allowed;
+}
+
+/* Button hover effect */
+.btn:not(:disabled):hover {
+  background: linear-gradient(90deg, #3A5CEB 0%, #6F41ED 100%);
+  transform: scale(1.05);
+}
+
+/* Select box styling */
+.chain-label {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.chain-select {
+  padding: 10px 15px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  background-color: #BDD2EB;
+  color: #333;
+  transition: background 0.3s ease, transform 0.2s ease;
+  min-width: 120px;
+}
+
+.chain-select:disabled {
+  background-color: #7e7e7e;
+  cursor: not-allowed;
+}
+
+/* Select box hover effect */
+.chain-select:not(:disabled):hover {
+  background: linear-gradient(90deg, #3A5CEB 0%, #6F41ED 100%);
+  transform: scale(1.05);
+  color: #fff;
+}
+
+/* Logs section styling */
+.logs-header {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.log-container {
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 15px 20px;
+  border-radius: 3px;
+  width: 100%;
+  max-width: 100%;
+  height: 250px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.log-entry {
+  margin: 5px 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  overflow-wrap: break-word; 
+  word-wrap: break-word; 
+  word-break: break-word;  
+  white-space: normal;
+}
+
+/* Scrollbar styling for log container */
+.log-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.log-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.log-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .app-header {
+    font-size: 2rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .button-group .btn, .chain-select  {
+    width: 100%;
+  }
+
+  .wallet-info, .log-container {
+    width: 100%;
+    max-width: 100%; 
+  }
+
+  .btn, .chain-select {
+    min-width: 120px;
+    padding: 10px 15px;
+  }
+
+  .logs-header {
+    font-size: 1.5rem;
+  }
+}

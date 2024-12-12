@@ -1,0 +1,18 @@
+{
+  "name": "supra-starkey-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm --filter supra-starkey-connect run build",
+    "dev": "pnpm build:all && concurrently \"pnpm --filter supra-starkey-connect run build:watch\" \"pnpm --filter vanilla-example-app run dev\" \"pnpm --filter react-example-app run dev\"",
+    "build:all": "pnpm build && pnpm --filter react-example-app run build",
+    "serve:react:dev": "pnpm --filter react-example-app run dev",
+    "serve:react:prod": "pnpm --filter react-example-app run preview",
+    "serve:vanilla:prod": "pnpm --filter vanilla-example-app run start",
+    "serve:all:prod": "concurrently \"pnpm --filter react-example-app run preview\" \"pnpm --filter vanilla-example-app run start\"",
+    "test": "pnpm --filter supra-starkey-connect run test"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

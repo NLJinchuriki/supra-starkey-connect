@@ -1,0 +1,45 @@
+# Node Modules
+node_modules/
+
+# Build Output
+dist/
+*.log
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS-specific files
+*.bak
+*.tmp
+
+# Lockfiles (use only one package manager)
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Coverage and Test Output
+coverage/
+*.lcov
+
+# Logs and Temp Files
+npm-debug.log*
+pnpm-debug.log*
+yarn-error.log*
+.tmp/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Cache
+.cache/
+.pnp.cjs
+.pnp.js

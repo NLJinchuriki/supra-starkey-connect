@@ -1,0 +1,14 @@
+{
+  "name": "vanilla-example-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "pnpm copy-scripts && serve .",
+    "copy-scripts": "cp ../supra-starkey-connect/dist/browser.iife.js ./browser.iife.js && cp ../supra-starkey-connect/dist/browser.iife.js.map ./browser.iife.js.map",
+    "build": "echo \"No build step required for vanilla JS app.\"",
+    "dev": "pnpm start"
+  },
+  "dependencies": {
+    "serve": "^14.2.4"
+  }
+}

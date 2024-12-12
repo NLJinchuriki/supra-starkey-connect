@@ -1,0 +1,6 @@
+# pnpm-workspace.yaml
+
+packages:
+  - 'packages/supra-starkey-connect'
+  - 'packages/react-example-app'
+  - 'packages/vanilla-example-app'
