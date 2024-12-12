@@ -45,7 +45,7 @@ import { ssc } from 'supra-starkey-connect'
 const account = await ssc.connect()
 ```
 
-For detailed examples and integration guides, refer to the [React Example App](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/react-example-app/README.md) and the [https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/vanilla-example-app/README.md](../vanilla-example-app/README.md).
+For detailed examples and integration guides, refer to the [React Example App](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/react-example-app/README.md) and the [Vanilla Example]([../vanilla-example-app/README.md](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/vanilla-example-app/README.md)).
 
 ## API
 
@@ -78,26 +78,6 @@ const transaction = {
 
 const txHash = await ssc.sendTransaction(transaction)
 console.log(`Transaction Hash: ${txHash}`)
-```
-
-#### `Balance`
-
-Represents the balance information.
-
-```typescript
-export interface Balance {
-  balance: number
-  formattedBalance: string
-  decimal: number
-  displayUnit: string
-}
-```
-
-**Example:**
-
-```typescript
-const balance = await ssc.getBalance()
-console.log(`Balance: ${balance.formattedBalance} ${balance.displayUnit}`)
 ```
 
 ### Methods
@@ -316,6 +296,15 @@ try {
 ```
 
 #### `getBalance()`
+
+```typescript
+export interface Balance {
+  balance: number
+  formattedBalance: string
+  decimal: number
+  displayUnit: string
+}
+```
 
 Retrieves the balance of the connected account.
 
