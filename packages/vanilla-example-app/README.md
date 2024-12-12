@@ -58,7 +58,7 @@ This command performs the following actions:
 1. **Copy Scripts**: Copies the `browser.iife.js` and its source map from the `supra-starkey-connect` dist folder to the current directory.
 2. **Serve the Application**: Uses the `serve` package to serve the application locally.
 
-Open [http://localhost:5000](http://localhost:5000) in your browser to view the app.
+Open [http://localhost:3000](http://localhost:3000) in your browser to view the app.
 
 ### Production Build
 
@@ -99,4 +99,4 @@ Feel free to modify the HTML, CSS, and JavaScript files to suit your project's n
 
 ## License
 
-This project is licensed under the [MIT License](../../LICENSE).
+This project is licensed under the [MIT License](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/LICENSE).

@@ -1,7 +1,11 @@
 {
     "name": "supra-starkey-connect",
-    "version": "1.0.0",
-    "description": "A typed, lightweight wrapper around the StarKey Supra wallet provider for the Supra Blockchain",
+    "version": "1.0.1",
+    "description": "A unofficial typed, lightweight wrapper around the StarKey Supra wallet provider for the Supra Blockchain",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/NLJinchuriki/supra-starkey-connect.git"
+    },
     "main": "dist/ssc.cjs",
     "module": "dist/ssc.esm.js",
     "browser": "dist/index.iife.js",
@@ -10,6 +14,10 @@
       "build": "tsup",
       "test": "vitest run"
     },
+    "files": [
+      "dist",
+      "README.md"
+    ],
     "devDependencies": {
       "tsup": "^6.0.0",
       "typescript": "^4.8.4",

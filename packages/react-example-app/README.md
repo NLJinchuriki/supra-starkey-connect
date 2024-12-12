@@ -45,7 +45,7 @@ To start the React application in development mode with hot-reloading:
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to view the app.
+Open [http://localhost:5173](http://localhost:5173) in your browser to view the app.
 
 ### Production Build
 
@@ -99,4 +99,4 @@ Feel free to modify the React components and styles to fit your project's requir
 
 ## License
 
-This project is licensed under the [MIT License](../../LICENSE).
+This project is licensed under the [MIT License](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/LICENSE).

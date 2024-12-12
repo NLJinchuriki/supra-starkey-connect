@@ -1,8 +1,8 @@
-# Supra Starkey Connect
+# Supra Starkey Connect (Unofficial)
 
 **supra-starkey-connect** is a TypeScript-based library that provides a robust and type-safe wrapper around the StarKey Supra wallet provider. It simplifies the integration of Supra Blockchain wallet functionalities into your web applications, enabling seamless interactions such as connecting wallets, sending transactions, signing messages, and handling network changes.
 
-For an overview of the entire monorepo and example applications, please refer to the [root README](../../README.md).
+For an overview of the entire monorepo and example applications, please refer to the [MONOREPO README](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/README.md).
 
 ## Features
 
@@ -33,7 +33,7 @@ import { ssc } from 'supra-starkey-connect'
 const account = await ssc.connect()
 ```
 
-For detailed examples and integration guides, refer to the [React Example App](../react-example-app/README.md) and the [Vanilla JS Example App](../vanilla-example-app/README.md).
+For detailed examples and integration guides, refer to the [React Example App](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/react-example-app/README.md) and the [https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/vanilla-example-app/README.md](../vanilla-example-app/README.md).
 
 ## API
 
@@ -435,16 +435,6 @@ pnpm build
 
 This command will compile the TypeScript code and generate the necessary build outputs in ESM, CJS, and IIFE formats.
 
-### Running Tests
-
-Tests are written using [Vitest](https://vitest.dev/). To execute tests:
-
-```bash
-pnpm test
-```
-
-This will run all test suites and provide feedback on the library's functionality and stability.
-
 ## Documentation
 
 Comprehensive documentation is available within the codebase and through example applications. For a quick start, refer to the example apps included in this monorepo.
@@ -455,4 +445,4 @@ Contributions are highly appreciated! Please ensure that your code adheres to th
 
 ## License
 
-This project is licensed under the [MIT License](../../LICENSE).
+This project is licensed under the [MIT License](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/LICENSE).
