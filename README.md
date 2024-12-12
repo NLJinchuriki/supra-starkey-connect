@@ -1,4 +1,4 @@
-# Supra Starkey Connect
+# Supra Starkey Connect (Unofficial)
 
 Welcome to the **Supra Starkey Connect**! This monorepo is designed to provide a comprehensive solution for integrating the Supra Starkey wallet provider into your web applications. It includes the core `supra-starkey-connect` library, along with example applications demonstrating its usage in both React and Vanilla JavaScript environments.
 
@@ -114,4 +114,4 @@ Contributions are welcome! Please open issues and submit pull requests for any e
 
 ## License
 
-This project is licensed under the [MIT License](./LICENSE).
+This project is licensed under the [MIT License](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/LICENSE).
