@@ -74,8 +74,6 @@ pnpm start
 vanilla-example-app/
 ├── index.html
 ├── main.js
-├── browser.iife.js
-├── browser.iife.js.map
 ├── styles.css
 ├── package.json
 └── README.md
@@ -95,7 +93,7 @@ Feel free to modify the HTML, CSS, and JavaScript files to suit your project's n
 
 - **Wallet Not Detected**: Ensure that the StarKey Supra wallet extension is installed and active in your browser. The app checks for the presence of `window.starkey`.
 - **Connection Issues**: If you encounter issues connecting to the wallet, try refreshing the page or reinstalling the StarKey Supra wallet extension.
-- **Script Loading Errors**: Verify that the `browser.iife.js` script is correctly copied and referenced in the `index.html` file.
+- **Script Loading Errors**: Verify that the `browser.iife.js` script is correctly copied and referenced in the `index.html` file. (for local testing, currently it links to the package on unpkg)
 
 ## License
 
