@@ -7,11 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const balanceEl = document.getElementById('balance');
   const versionEl = document.getElementById('version');
   const chainIdEl = document.getElementById('chainId');
+  const signMessageInput = document.getElementById('signMessageInput');
+  const signMessageButton = document.getElementById('signMessageButton');
+  const signatureResponseEl = document.getElementById('signatureResponse');
 
   const connectButton = document.getElementById('connectButton');
   const disconnectButton = document.getElementById('disconnectButton');
   const sendTransactionButton = document.getElementById('sendTransactionButton');
-  const signMessageButton = document.getElementById('signMessageButton');
   const chainSelect = document.getElementById('chainSelect');
   const promptInstallButton = document.getElementById('promptInstallButton');
 
@@ -233,15 +235,23 @@ document.addEventListener('DOMContentLoaded', () => {
   /**
    * Signs a message.
    */
-  const signMsg = async () => {
+  const signMessage = async () => {
+    const message = signMessageInput.value;
+    if (!message) {
+      addLog('Message cannot be empty.');
+      return;
+    }
     try {
-      addLog('Signing message...');
-      const signature = await window.ssc.signMessage_undocumented('some message');
-      updateWalletInfo({ status: `Message signed: ${signature}` });
-      addLog(`Message signed successfully. Signature: ${signature}`);
+      const result = await window.ssc.signMessage({ message });
+      signatureResponseEl.innerHTML = `
+          <p>Signature Response:</p>
+          <pre>${JSON.stringify(result, null, 2)}</pre>
+      `;
+
+      addLog('Message signed successfully.');
     } catch (err) {
       updateWalletInfo({ status: `Sign message failed: ${err.message}` });
-      addLog(`signMsg Failed: ${err.message}`);
+      addLog(`Error signing message: ${err.message}`);
     }
   };
 
@@ -389,10 +399,10 @@ document.addEventListener('DOMContentLoaded', () => {
   init();
 
   // Event Listeners for Buttons and Select Box
+  signMessageButton.addEventListener('click', signMessage);
   connectButton.addEventListener('click', connectWallet);
   disconnectButton.addEventListener('click', disconnectWallet);
   sendTransactionButton.addEventListener('click', sendTransaction);
-  signMessageButton.addEventListener('click', signMsg);
   chainSelect.addEventListener('change', (e) => {
     const selectedChain = e.target.value;
     changeNet(selectedChain);

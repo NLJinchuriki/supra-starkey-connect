@@ -1,6 +1,6 @@
 {
   "name": "supra-starkey-monorepo",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "scripts": {
     "build": "pnpm --filter supra-starkey-connect run build",

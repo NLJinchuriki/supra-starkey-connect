@@ -1,26 +1,18 @@
-<!-- vanilla-example-app/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  
+
   <title>Supra Starkey Connect Vanilla JS Example</title>
-  
-  <!-- Link to the external CSS file -->
   <link rel="stylesheet" href="styles.css">
   
-  <!-- Include the Supra-Starkey-Connect IIFE build -->
-  <!-- Adjust the path based on your workspace setup -->
-  <script src="https://unpkg.com/supra-starkey-connect/dist/browser.iife.js"></script>
+  <script src="browser.iife.js"></script>
 </head>
 <body>
-  
   <div class="app-container">
     <h1 class="app-header">Supra Starkey Connect Vanilla JS Example</h1>
-    
-    <!-- Wallet Information Section -->
     <div class="wallet-info">
       <p><strong>Status:</strong> <span id="status">Not Connected</span></p>
       <p><strong>Account:</strong> <span id="account">None</span></p>
@@ -30,14 +22,10 @@
       <p><strong>Version:</strong> <span id="version">N/A</span></p>
       <p><strong>Chain ID:</strong> <span id="chainId">N/A</span></p>
     </div>
-    
-    <!-- Button Group Section -->
     <div class="button-group">
       <button id="connectButton" class="btn">Connect Wallet</button>
       <button id="disconnectButton" class="btn" disabled>Disconnect Wallet</button>
       <button id="sendTransactionButton" class="btn" disabled>Send Test Transaction</button>
-      <button id="signMessageButton" class="btn" disabled>Sign Message</button>
-      
       <label for="chainSelect" class="chain-label">Change Network:</label>
       <select id="chainSelect" class="chain-select" disabled>
         <option value="1">Chain 1</option>
@@ -47,19 +35,25 @@
         <option value="5">Chain 5</option>
         <option value="6">Chain 6</option>
       </select>
-      
       <button id="promptInstallButton" class="btn">Prompt Install</button>
       <button id="promptCreatorButton" class="btn">Visit GitHub</button>
     </div>
-    
-    <!-- Logs Section -->
-    <h2 class="logs-header">Backend Interaction Logs</h2>
-    <div class="log-container" id="logContainer">
-      <!-- Log entries will appear here -->
+    <div class="content-wrapper">
+      <div>
+        <h2 class="logs-header">Message Signing</h2>
+        <div class="wallet-info">
+          <textarea id="signMessageInput" placeholder="Enter message to sign"></textarea>
+          <button id="signMessageButton" class="btn" disabled>Sign Message</button>
+          <div id="signatureResponse"></div>
+        </div>
+      </div>
+      <div>
+        <h2 class="logs-header">Interaction Logs</h2>
+        <div class="log-container" id="logContainer"></div>
+      </div>
     </div>
   </div>
-  
-  <!-- Link to the external JavaScript file -->
+
   <script src="main.js"></script>
 </body>
 </html>

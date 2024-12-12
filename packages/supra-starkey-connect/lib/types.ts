@@ -19,6 +19,23 @@ export interface Balance {
 }
 
 /**
+ * Parameters for signing a message.
+ */
+export interface SignMessageParams {
+  message: string
+  nonce?: string
+}
+
+/**
+ * Represents the response from a signed message.
+ */
+export interface SignMessageResponse {
+  publicKey: string
+  signature: string
+  address: string
+}
+
+/**
  * Defines the StarkeyProvider interface.
  */
 export interface StarkeyProvider {
@@ -30,10 +47,18 @@ export interface StarkeyProvider {
   sendTransaction(tx: SendTransactionParams): Promise<string>
 
   /**
-   * Undocumented method. Parameters can be any object.
-   * @param params - Undocumented parameters. Refer to documentation or contact starKey support for details.
+   * Signs a message with the Starkey wallet.
+   * Partially documented method.
+   * @param params - The parameters required for signing a message.
    */
-  signMessage(params: any): Promise<string>
+  signMessage(params: SignMessageParams): Promise<SignMessageResponse>
+
+  /**
+   * Signs a message with the Starkey wallet.
+   * Partially documented method.
+   * @param params - The parameters required for signing a message.
+   */
+  signMessageRaw(params: SignMessageParams): Promise<SignMessageResponse>
 
   /**
    * Undocumented method. Parameters can be any object.

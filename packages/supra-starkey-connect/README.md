@@ -45,7 +45,7 @@ import { ssc } from 'supra-starkey-connect'
 const account = await ssc.connect()
 ```
 
-For detailed examples and integration guides, refer to the [React Example App](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/react-example-app/README.md) and the [Vanilla Example]([../vanilla-example-app/README.md](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/vanilla-example-app/README.md)).
+For detailed examples and integration guides, refer to the [React Example App](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/react-example-app/README.md) and the [Vanilla Example](<[../vanilla-example-app/README.md](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/vanilla-example-app/README.md)>).
 
 ## API
 
@@ -58,7 +58,7 @@ The `supra-starkey-connect` library exposes a comprehensive API to interact with
 Parameters for sending a transaction.
 
 ```typescript
-export interface SendTransactionParams {
+interface SendTransactionParams {
   from: string
   to: string
   value: string | number
@@ -226,79 +226,10 @@ const txHash = await ssc.sendTransaction(transaction)
 console.log(`Transaction Hash: ${txHash}`)
 ```
 
-#### `signMessage_undocumented(params: any)`
-
-**Undocumented Function**
-
-Signs a message. This function is currently undocumented by StarKey. We will provide full support once more information is available from StarKey.
-
-```typescript
-async signMessage_undocumented(params: any): Promise<string>
-```
-
-**Example:**
-
-```typescript
-try {
-  const signature = await ssc.signMessage_undocumented('Hello, Supra!')
-  console.log(`Signature: ${signature}`)
-} catch (error) {
-  console.error(`Sign Message Error: ${error.message}`)
-}
-```
-
-#### `waitForTransactionWithResult_undocumented(params: any)`
-
-**Undocumented Function**
-
-Waits for a transaction with result. This function is currently undocumented by StarKey. We will provide full support once more information is available from StarKey.
-
-```typescript
-async waitForTransactionWithResult_undocumented(params: any): Promise<any>
-```
-
-**Example:**
-
-```typescript
-try {
-  const result = await ssc.waitForTransactionWithResult_undocumented({
-    txHash: '0xTransactionHash'
-  })
-  console.log(`Transaction Result:`, result)
-} catch (error) {
-  console.error(`Wait For Transaction Error: ${error.message}`)
-}
-```
-
-#### `createRawTransactionData_undocumented(params: any)`
-
-**Undocumented Function**
-
-Creates raw transaction data. This function is currently undocumented by StarKey. We will provide full support once more information is available from StarKey.
-
-```typescript
-async createRawTransactionData_undocumented(params: any): Promise<any>
-```
-
-**Example:**
-
-```typescript
-try {
-  const rawData = await ssc.createRawTransactionData_undocumented({
-    from: '0xYourAccount',
-    to: '0xRecipient',
-    value: '1000000'
-  })
-  console.log(`Raw Transaction Data:`, rawData)
-} catch (error) {
-  console.error(`Create Raw Transaction Data Error: ${error.message}`)
-}
-```
-
 #### `getBalance()`
 
 ```typescript
-export interface Balance {
+interface Balance {
   balance: number
   formattedBalance: string
   decimal: number
@@ -418,11 +349,127 @@ The `supra-starkey-connect` library currently exposes several methods that are *
 
 ### List of Undocumented Methods
 
-- **`signMessage_undocumented(params: any): Promise<string>`**
+- **`signMessage(params: SignMessageParams): Promise<SignMessageResponse>`**
 - **`waitForTransactionWithResult_undocumented(params: any): Promise<any>`**
 - **`createRawTransactionData_undocumented(params: any): Promise<any>`**
 
 **Note:** Use these methods with caution, as their behavior may change without notice. We recommend monitoring StarKey's official channels for updates and additional documentation regarding these functions.
+
+### Updated Documentation
+
+#### `signMessage(params: SignMessageParams)`
+
+**Higher Order Component (HoC)**
+
+The `signMessage` function is a **Higher Order Component (HoC)** wrapped around the `signMessageRaw` method. It simplifies and abstracts the signing process provided by the StarKey wallet's window provider. The function prepares the message and nonce internally, making it more convenient to use.
+
+Key responsibilities:
+
+1. Preparing the message into a compatible format.
+2. Generating a nonce (if not provided) using the `generateNonce` utility.
+3. Removing the `0x` prefix from hexadecimal strings using the `remove0xPrefix` utility.
+4. Delegating the signing operation to the `signMessageRaw` method, which directly interacts with the window provider.
+
+```typescript
+/**
+ * Parameters for signing a message.
+ */
+export interface SignMessageParams {
+  message: string
+  nonce?: string
+}
+
+/**
+ * Represents the response from a signed message.
+ */
+export interface SignMessageResponse {
+  publicKey: string
+  signature: string
+  address: string
+}
+```
+
+```typescript
+async signMessage(params: SignMessageParams): Promise<{ verified: boolean; response: SignMessageResponse }>
+```
+
+**Utilities Used Internally:**
+
+1. **`remove0xPrefix(value: string): string`**
+   Removes the `0x` prefix from a hexadecimal string, if it exists.
+
+2. **`generateNonce(message: string): string`**
+   Generates a random nonce using `tweetnacl`'s `randomBytes`. This ensures unique signing for each message. If no nonce is provided, it generates one.
+
+**Example Usage:**
+
+```typescript
+try {
+  const params = {
+    message: 'Hello, Supra!',
+  }
+  const response = await ssc.signMessage(params)
+  console.log(reponse) - outputs: SignMessageResponse
+} catch (error) {
+  console.error(`Sign Message Error: ${error.message}`)
+}
+```
+
+### How It Works
+
+1. **Prepares the Message:** Converts the string message to a hex format.
+2. **Handles Nonce:** Generates a random nonce if none is provided by the user.
+3. **Uses Utilities:** Applies `remove0xPrefix` to ensure a clean hex format.
+4. **Delegates to `signMessageRaw`:** Passes the processed message and nonce to the `signMessageRaw` method for signing.
+5. **Returns:** Provides both the response from the signing function and a verification status (if applicable).
+
+#### `waitForTransactionWithResult_undocumented(params: any)`
+
+**Undocumented Function**
+
+Waits for a transaction with result. This function is currently undocumented by StarKey. We will provide full support once more information is available from StarKey.
+
+```typescript
+async waitForTransactionWithResult_undocumented(params: any): Promise<any>
+```
+
+**Example:**
+
+```typescript
+try {
+  const result = await ssc.waitForTransactionWithResult_undocumented({
+    txHash: '0xTransactionHash'
+  })
+  console.log(`Transaction Result:`, result)
+} catch (error) {
+  console.error(`Wait For Transaction Error: ${error.message}`)
+}
+```
+
+#### `createRawTransactionData_undocumented(params: any)`
+
+**Undocumented Function**
+
+Creates raw transaction data. This function is currently undocumented by StarKey. We will provide full support once more information is available from StarKey.
+
+```typescript
+async createRawTransactionData_undocumented(params: any): Promise<any>
+```
+
+**Example:**
+
+```typescript
+try {
+  const rawData = await ssc.createRawTransactionData_undocumented({
+    from: '0xYourAccount',
+    to: '0xRecipient',
+    value: '1000000'
+  })
+  console.log(`Raw Transaction Data:`, rawData)
+} catch (error) {
+  console.error(`Create Raw Transaction Data Error: ${error.message}`)
+}
+```
 
 ## Development
 

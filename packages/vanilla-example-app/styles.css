@@ -116,7 +116,7 @@ body, html, #root {
   margin-bottom: 20px;
 }
 
-.wallet-info p {
+.wallet-info p, pre {
   margin: 8px 0;
   font-size: 1rem;
   overflow-wrap: break-word; 
@@ -236,6 +236,31 @@ body, html, #root {
   border-radius: 10px;
 }
 
+
+/* message signing */
+.content-wrapper { 
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.content-wrapper > div {
+  flex: 2;
+  width: 50%;
+}
+
+.content-wrapper > div .btn {
+  margin-top: 15px;
+}
+
+textarea {
+  width: 100%; 
+  box-sizing: border-box; 
+}
+
+
 /* Responsive Design */
 @media (max-width: 600px) {
   .app-header {
@@ -264,4 +289,22 @@ body, html, #root {
   .logs-header {
     font-size: 1.5rem;
   }
+
+  .content-wrapper {
+    flex-direction: column;
+  }
+
+  .content-wrapper > div .btn {
+    width: 100%;
+  }
+
+  .content-wrapper > div {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .content-wrapper > div:last-child {
+    margin-bottom: 0;
+  }
 }
+

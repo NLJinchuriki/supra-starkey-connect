@@ -1,12 +1,19 @@
+import { Buffer } from 'buffer'
 import ssc from './ssc'
 
 declare global {
   interface Window {
     ssc: typeof ssc
+    Buffer: typeof Buffer
   }
 }
 
-// Assign the ssc instance directly to window.ssc
-if (typeof window !== 'undefined') {
-  window.ssc = ssc
-}
+;(async () => {
+  if (typeof window !== 'undefined') {
+    window.Buffer = Buffer
+
+    await ssc.init()
+    window.ssc = ssc
+    console.log('SSC initialized and attached to window')
+  }
+})()

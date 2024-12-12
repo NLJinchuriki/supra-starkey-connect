@@ -17,6 +17,9 @@ function App() {
   const [version, setVersion] = useState<string | null>(null)
   const [chainId, setChainId] = useState<string | null>(null)
   const logContainerRef = useRef<HTMLDivElement>(null)
+  const [signMessage, setSignMessage] = useState<string>('')
+  const [signatureResponse, setSignatureResponse] = useState<any>(null)
+  const [signMessageLoading, setSignMessageLoading] = useState<boolean>(false)
 
   const [logs, setLogs] = useState<string[]>([])
 
@@ -116,20 +119,35 @@ function App() {
     }
   }
 
-  /**
-   * Signs a message.
-   */
-  const signMsg = async () => {
+  const handleSignMessage = async () => {
+    if (!account) {
+      setStatus('No connected account. Connect wallet first.')
+      addLog('Sign message failed. No connected account.')
+      return
+    }
+
     try {
-      addLog('Signing message... (will fail since we do not know what to pass)')
-      const signature = await ssc.signMessage_undocumented('some message')
-      setStatus(`Message not signed: ${signature}`)
-      addLog(
-        `Message not signed successfully. Signature: ${signature} function is undocumented, we don't know what to pass`
-      )
+      setSignMessageLoading(true)
+      setSignatureResponse(undefined)
+
+      const result = await ssc.signMessage({
+        message: signMessage
+      })
+
+      if (result) {
+        const { response, verified } = result
+
+        setSignatureResponse({ ...response, verified })
+        setStatus(`Message signed and verified: ${verified}`)
+        addLog(
+          `Message signed - Signature: ${response.signature}, Verified: ${verified}`
+        )
+      }
     } catch (err: any) {
       setStatus(`Sign message failed: ${err.message}`)
-      addLog(`signMsg Failed: ${err.message}`)
+      addLog(`Sign message failed: ${err.message}`)
+    } finally {
+      setSignMessageLoading(false)
     }
   }
 
@@ -364,9 +382,6 @@ function App() {
         <button onClick={sendTransaction} disabled={!account} className="btn">
           Send Test Transaction
         </button>
-        <button onClick={signMsg} disabled={!account} className="btn">
-          Sign Message
-        </button>
 
         <label htmlFor="chainSelect" className="chain-label">
           Change Network:
@@ -393,13 +408,48 @@ function App() {
         </button>
       </div>
 
-      <h2 className="logs-header">Backend Interaction Logs</h2>
-      <div className="log-container" ref={logContainerRef}>
-        {logs.map((log, index) => (
-          <p key={index} className="log-entry">
-            {log}
-          </p>
-        ))}
+      <div className="content-wrapper">
+        <div>
+          <h2 className="logs-header">Message signing</h2>
+          <div className="wallet-info">
+            <textarea
+              placeholder="Enter message to sign"
+              value={signMessage}
+              onChange={(e) => setSignMessage(e.target.value)}
+            />
+            <button
+              className="btn"
+              onClick={() => {
+                if (!signMessage) {
+                  return addLog(
+                    'No sign message set, please set a message to sign first'
+                  )
+                }
+                handleSignMessage()
+              }}
+              disabled={!account || signMessageLoading}
+            >
+              {signMessageLoading ? 'Signing...' : 'Sign Message'}
+            </button>
+            {signatureResponse && (
+              <div>
+                <p>Signature Response:</p>
+                <pre>{JSON.stringify(signatureResponse, null, 2)}</pre>
+              </div>
+            )}
+          </div>
+        </div>
+        <div>
+          <h2 className="logs-header">Interaction Logs</h2>
+
+          <div className="log-container" ref={logContainerRef}>
+            {logs.map((log, index) => (
+              <p key={index} className="log-entry">
+                {log}
+              </p>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )

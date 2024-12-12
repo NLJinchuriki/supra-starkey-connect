@@ -43,3 +43,6 @@ yarn-error.log*
 .cache/
 .pnp.cjs
 .pnp.js
+
+packages/vanilla-example-app/browser.iife.js
+packages/vanilla-example-app/browser.iife.js.map

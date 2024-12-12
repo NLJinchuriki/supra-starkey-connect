@@ -1,10 +1,21 @@
-import { StarkeyProvider, SendTransactionParams, Balance } from './types'
+import nacl from 'tweetnacl'
+import { Buffer } from 'buffer'
+import { remove0xPrefix, generateNonce } from './utils'
+
+import {
+  StarkeyProvider,
+  SendTransactionParams,
+  Balance,
+  SignMessageParams,
+  SignMessageResponse
+} from './types'
 
 /**
  * A class that provides a wrapper around the StarKey Supra wallet provider.
  */
 export class SupraStarkeyConnect {
   private provider: StarkeyProvider | null = null
+  private initialized: boolean = false
   private _accountChangedCallbacks: Array<(accounts: string[]) => void> = []
   private _disconnectCallbacks: Array<(info: any) => void> = []
   private _networkChangedCallbacks: Array<
@@ -33,6 +44,9 @@ export class SupraStarkeyConnect {
    * Initializes the Starkey provider by setting up event listeners.
    */
   init(): void {
+    if (this.initialized) return
+    this.initialized = true
+
     if (!this.isStarKeyAvailable()) {
       console.warn(
         'StarKey Supra wallet not available. Please install StarKey at https://starkey.app/'
@@ -129,18 +143,70 @@ export class SupraStarkeyConnect {
   }
 
   /**
-   * Undocumented function. Needs more input from the StarKey team.
    *
-   * @param {any} params - Undocumented parameters. Refer to documentation or contact support for details.
-   * @returns {Promise<string>} The signed message.
-   * @throws Will throw an error if the provider is not initialized.
+   * Signs a message with the Starkey wallet.
+   * partially documented function. Needs more input from the StarKey team.
+   * @param {SignMessageParams} params - The message and nonce to be signed.
+   * @returns {Promise<SignMessageResponse>} The signing response containing publicKey, signature, and address.
    */
-  async signMessage_undocumented(params: any): Promise<string> {
+  async signMessageRaw(
+    params: SignMessageParams
+  ): Promise<SignMessageResponse> {
     console.warn(
-      'signMessage_undocumented is undocumented. Please refer to the starkey documentation or contact starkey support for more details.'
+      'signMessage is partially. Please refer to the starkey documentation or contact starkey support if issues occur'
     )
-    if (!this.provider) throw new Error('Provider not initialized')
+    if (!this.provider) {
+      this.init()
+    }
+    if (!this.provider) {
+      throw new Error('Provider not initialized.')
+    }
+
+    if (!params.message) {
+      throw new Error('Message not provided.')
+    }
     return await this.provider.signMessage(params)
+  }
+
+  /**
+   * Partially verified function. Needs more input from the StarKey team.
+   *
+   * A higher-level signing function that performs the signing and verification logic.
+   * This abstracts away the raw signing process and handles Uint8Array conversion.
+   * @param {string} signMessage - The message to sign as a plain string.
+   * @param {string} nonce - A unique nonce to ensure the signature is unique.
+   * @returns {Promise<{ verified: boolean, response: SignMessageResponse }>}
+   */
+  async signMessage(
+    params: SignMessageParams
+  ): Promise<{ verified: boolean; response: SignMessageResponse }> {
+    if (!params.message) {
+      throw new Error('Message not provided.')
+    }
+    const message = '0x' + Buffer.from(params.message, 'utf8').toString('hex')
+    const response = await this.signMessageRaw({
+      message,
+      nonce: params.nonce || generateNonce(message)
+    })
+
+    if (response) {
+      const { publicKey, signature } = response
+      const sign = remove0xPrefix(signature)
+      const key = remove0xPrefix(publicKey)
+
+      const signUint8Array = Uint8Array.from(Buffer.from(sign, 'hex'))
+      const keyUint8Array = Uint8Array.from(Buffer.from(key, 'hex'))
+
+      const verified = nacl.sign.detached.verify(
+        new TextEncoder().encode(params.message),
+        signUint8Array,
+        keyUint8Array
+      )
+
+      return { verified, response }
+    }
+
+    throw new Error('Signing failed, no response received.')
   }
 
   /**
@@ -152,7 +218,7 @@ export class SupraStarkeyConnect {
    */
   async waitForTransactionWithResult_undocumented(params: any): Promise<any> {
     console.warn(
-      'waitForTransactionWithResult_undocumented is undocumented. Please refer to the starkey documentation or contact starkey support for more details.'
+      'waitForTransactionWithResult is undocumented. Please refer to the starkey documentation or contact starkey support for more details.'
     )
     if (!this.provider) throw new Error('Provider not initialized')
     return await this.provider.waitForTransactionWithResult(params)
@@ -167,7 +233,7 @@ export class SupraStarkeyConnect {
    */
   async createRawTransactionData_undocumented(params: any): Promise<any> {
     console.warn(
-      'createRawTransactionData_undocumented is undocumented. Please refer to the starkey documentation or contact starkey support for more details.'
+      'createRawTransactionData is undocumented. Please refer to the starkey documentation or contact starkey support for more details.'
     )
     if (!this.provider) throw new Error('Provider not initialized')
     return await this.provider.createRawTransactionData(params)
