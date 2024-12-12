@@ -17,8 +17,20 @@ For an overview of the entire monorepo and example applications, please refer to
 As part of a monorepo, `supra-starkey-connect` is managed via workspace dependencies. To install it within your project:
 
 ```bash
-pnpm install
+npm install supra-starkey-connect
+# or
+pnpm add supra-starkey-connect
 ```
+
+**For Browser (Vanilla JavaScript)**
+
+Add this tag for browser implementation
+
+```typescript
+<script src="https://unpkg.com/supra-starkey-connect/dist/browser.iife.js"></script>
+```
+
+You can use the browser-friendly IIFE build provided by the library via a CDN:
 
 Ensure that your project is part of the monorepo workspace as defined in the `pnpm-workspace.yaml`.
 
