@@ -75,8 +75,9 @@ The monorepo includes scripts to run both example applications from the root dir
 
 2. **Access the Applications**
 
-   - **React Example App**: Open [http://localhost:3000](http://localhost:5173) in your browser.
-   - **Vanilla Example App**: Open [http://localhost:5000](http://localhost:3000) in your browser.
+   - **React Example App**: Open [http://localhost:5173](http://localhost:5173) in your browser.
+   - **Vanilla Example App**: Open [http://localhost:3000](http://localhost:3000) in your browser.
+   - **Vanilla Example App Live Demo**: [https://supra-starkey-connect-htfd.vercel.app](Live demo on Vercel)
 
 ## Scripts
 
