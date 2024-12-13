@@ -12,6 +12,8 @@ For an overview of the entire monorepo and example applications, please refer to
 - **Comprehensive Methods**: Includes methods for connecting, disconnecting, sending transactions, signing messages, and more.
 - **Undocumented Methods Support**: Exposes additional methods that are currently undocumented by StarKey, with the intention to support them fully once more information is available.
 
+**Vanilla JS supra-starkey-connect features demo**: [Live Demo on vercel](https://supra-starkey-connect-vanilla.vercel.app)
+
 ## Installation
 
 To install supra-starkey-connect within your project:
