@@ -2,7 +2,7 @@
 
 The **Vanilla JavaScript Example App** provides a straightforward demonstration of how to integrate the `supra-starkey-connect` library into a web application without the use of frontend frameworks. It showcases essential functionalities such as connecting to the StarKey Supra wallet, sending transactions, signing messages, and handling network changes.
 
-- **Vanilla Example App Live Demo**: [Live Demo on vercel](https://supra-starkey-connect-htfd.vercel.app)
+- **Vanilla Example App Live Demo**: [Live Demo on vercel](supra-starkey-connect-vanilla.vercel.app)
 
 ## Table of Contents
 
