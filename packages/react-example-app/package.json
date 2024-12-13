@@ -2,10 +2,10 @@
   "name": "react-example-app",
   "version": "1.0.5",
   "scripts": {
-    "postinstall": "node scripts/fix-workspace-deps.js",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "fix-deps": "node fix-workspace-deps.js"
   },
   "dependencies": {
     "@vercel/static-build": "^2.5.39",
