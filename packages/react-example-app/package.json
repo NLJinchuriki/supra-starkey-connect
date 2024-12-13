@@ -8,7 +8,7 @@
     "fix-deps": "node fix-workspace-deps.js"
   },
   "dependencies": {
-    "@vercel/node": "^5.0.0",
+    "@vercel/static-build": "^2.5.39",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "scheduler": "^0.25.0",

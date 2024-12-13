@@ -3,7 +3,7 @@
     "builds": [
       {
         "src": "package.json",
-        "use": "@vercel/node"
+        "use": "@vercel/static-build"
       }
     ],
     "buildCommand": "node scripts/fix-workspace-deps.js && pnpm install && pnpm run build",
