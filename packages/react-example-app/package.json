@@ -2,6 +2,7 @@
   "name": "react-example-app",
   "version": "1.0.5",
   "scripts": {
+    "postinstall": "node scripts/fix-workspace-deps.js",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
