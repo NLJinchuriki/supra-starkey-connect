@@ -60,6 +60,7 @@ function App() {
       fetchBalance()
       fetchVersion()
       fetchChainId()
+      fetchCurrentNetwork()
     } catch (err: any) {
       setStatus(`Connection failed: ${err.message}`)
       addLog(`Connection Failed: ${err.message}`)
@@ -76,6 +77,9 @@ function App() {
       setAccount(null)
       setAllAccounts(null)
       setBalance(null)
+      setNetwork(null)
+      setVersion(null)
+      setChainId(null)
       setStatus('Disconnected')
       addLog('Disconnected from Supra wallet.')
     } catch (err: any) {
@@ -119,6 +123,9 @@ function App() {
     }
   }
 
+  /**
+   * Handles signing a message.
+   */
   const handleSignMessage = async () => {
     if (!account) {
       setStatus('No connected account. Connect wallet first.')
@@ -161,6 +168,7 @@ function App() {
       setStatus(`Network changed: ${JSON.stringify(res)}`)
       setChainId(res.chainId)
       addLog(`Network changed successfully. New Chain ID: ${res.chainId}`)
+      fetchCurrentNetwork()
     } catch (err: any) {
       setStatus(`Change network failed: ${err.message}`)
       addLog(
@@ -178,10 +186,10 @@ function App() {
   }
 
   /**
-   * Visits Supra-starkey-connect github
+   * Visits supra-starkey-connect GitHub repository.
    */
   const promptCreator = () => {
-    addLog('Visiting supra-starkey-connect github...')
+    addLog('Visiting supra-starkey-connect GitHub...')
     window.open(
       'https://github.com/NLJinchuriki/supra-starkey-connect',
       '_blank'
@@ -265,6 +273,7 @@ function App() {
 
   /**
    * Registers event listeners for account changes, disconnects, and network changes.
+   * Cleans up the listeners on component unmount.
    */
   useEffect(() => {
     // Account Changed Listener
@@ -283,6 +292,9 @@ function App() {
       setAccount(null)
       setAllAccounts(null)
       setBalance(null)
+      setNetwork(null)
+      setVersion(null)
+      setChainId(null)
       setStatus('Wallet disconnected')
       addLog('Event: Wallet disconnected.')
     }
@@ -292,6 +304,7 @@ function App() {
       setStatus(`Network changed: ${JSON.stringify(networkInfo)}`)
       setChainId(networkInfo.chainId)
       addLog(`Event: Network changed to Chain ${networkInfo.chainId}`)
+      fetchCurrentNetwork() // Fetch updated network info
     }
 
     // Register Event Listeners
@@ -301,12 +314,16 @@ function App() {
 
     // Cleanup Function to Remove Event Listeners
     return () => {
-      // there are no provider.off message for the registered listeners sow we cannot remove them
-      // If not implemented, consider adding them to prevent memory leaks,
-      // we should ask starkey wallet for this.
+      ssc.offAccountChanged(handleAccountChanged)
+      ssc.offDisconnect(handleDisconnect)
+      ssc.offNetworkChanged(handleNetworkChanged)
+      addLog('Cleaned up event listeners.')
     }
   }, [])
 
+  /**
+   * Fetches the initial state upon component mount.
+   */
   useEffect(() => {
     const fetchInitialState = async () => {
       if (ssc.isStarKeyAvailable()) {
@@ -332,6 +349,9 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  /**
+   * Handles changes to the selected chain.
+   */
   const handleChainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newChain = e.target.value
     setSelectedChain(newChain)
@@ -410,7 +430,7 @@ function App() {
 
       <div className="content-wrapper">
         <div>
-          <h2 className="logs-header">Message signing</h2>
+          <h2 className="logs-header">Message Signing</h2>
           <div className="wallet-info">
             <textarea
               placeholder="Enter message to sign"

@@ -1,5 +1,5 @@
-
 document.addEventListener('DOMContentLoaded', () => {
+  // Grab all necessary DOM elements
   const statusEl = document.getElementById('status');
   const accountEl = document.getElementById('account');
   const allAccountsEl = document.getElementById('allAccounts');
@@ -16,10 +16,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const sendTransactionButton = document.getElementById('sendTransactionButton');
   const chainSelect = document.getElementById('chainSelect');
   const promptInstallButton = document.getElementById('promptInstallButton');
+  const promptCreatorButton = document.getElementById('promptCreatorButton');
 
   const logContainer = document.getElementById('logContainer');
 
   let logs = [];
+
+  /**
+   * Adds a new log entry to the logs state.
+   * @param {string} message - The log message to add.
+   */
   const addLog = (message) => {
     logs.push(message);
     const logEntry = document.createElement('p');
@@ -165,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
       fetchBalance();
       fetchVersion();
       fetchChainId();
+      fetchCurrentNetwork(); // Ensures network info is fetched
     } catch (err) {
       updateWalletInfo({ status: `Connection failed: ${err.message}` });
       addLog(`Connection Failed: ${err.message}`);
@@ -236,18 +243,19 @@ document.addEventListener('DOMContentLoaded', () => {
    * Signs a message.
    */
   const signMessage = async () => {
-    const message = signMessageInput.value;
+    const message = signMessageInput.value.trim();
     if (!message) {
       addLog('Message cannot be empty.');
       return;
     }
     try {
+      addLog('Attempting to sign message...');
       const result = await window.ssc.signMessage({ message });
       signatureResponseEl.innerHTML = `
-          <p>Signature Response:</p>
-          <pre>${JSON.stringify(result, null, 2)}</pre>
+        <p>Signature Response:</p>
+        <pre>${JSON.stringify(result, null, 2)}</pre>
       `;
-
+      updateWalletInfo({ status: 'Message signed successfully.' });
       addLog('Message signed successfully.');
     } catch (err) {
       updateWalletInfo({ status: `Sign message failed: ${err.message}` });
@@ -257,6 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /**
    * Changes the network chain based on the selected chain ID.
+   * @param {string} chain - The chain ID to switch to.
    */
   const changeNet = async (chain) => {
     try {
@@ -264,6 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await window.ssc.changeNetwork(chain);
       updateWalletInfo({ chainId: res.chainId });
       addLog(`Network changed successfully. New Chain ID: ${res.chainId}`);
+      fetchCurrentNetwork(); // Fetch updated network info
     } catch (err) {
       updateWalletInfo({ status: `Change network failed: ${err.message}` });
       addLog(`Change Network (ChainId) Failed: ${err.message} only chain 6 seems to work`);
@@ -279,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   /**
-   * Visits Supra-starkey-connect GitHub repository.
+   * Visits supra-starkey-connect GitHub repository.
    */
   const promptCreator = () => {
     addLog('Visiting supra-starkey-connect GitHub repository...');
@@ -291,71 +301,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /**
    * Registers event listeners for account changes, disconnects, and network changes.
+   * Cleans up the listeners on page unload.
    */
   const registerEventListeners = () => {
     // Account Changed Listener
-    window.ssc.onAccountChanged(handleAccountChanged);
+    const handleAccountChanged = (accounts) => {
+      const newAccount = accounts[0] || null;
+      updateWalletInfo({
+        account: newAccount,
+        status: newAccount ? `Connected: ${newAccount}` : 'Disconnected'
+      });
+      addLog(`Event: Account changed to ${newAccount || 'No account'}`);
+      if (newAccount) {
+        fetchAllAccounts();
+        fetchBalance();
+      } else {
+        // Disable buttons if no account
+        disconnectButton.disabled = true;
+        sendTransactionButton.disabled = true;
+        signMessageButton.disabled = true;
+        chainSelect.disabled = true;
+      }
+    };
 
     // Disconnect Listener
-    window.ssc.onDisconnect(handleDisconnectEvent);
-
-    // Network Changed Listener
-    window.ssc.onNetworkChanged(handleNetworkChanged);
-  };
-
-  /**
-   * Handler for account changes.
-   * @param {string[]} accounts - The list of accounts.
-   */
-  const handleAccountChanged = (accounts) => {
-    const newAccount = accounts[0] || null;
-    updateWalletInfo({
-      account: newAccount,
-      status: newAccount ? `Connected: ${newAccount}` : 'Disconnected'
-    });
-    addLog(`Event: Account changed to ${newAccount || 'No account'}`);
-    if (newAccount) {
-      fetchAllAccounts();
-      fetchBalance();
-      fetchVersion();
-      fetchChainId();
-    } else {
-      // Disable buttons if no account
+    const handleDisconnectEvent = () => {
+      updateWalletInfo({
+        status: 'Wallet disconnected',
+        account: null,
+        allAccounts: null,
+        balance: null,
+        network: null,
+        version: null,
+        chainId: null,
+      });
+      addLog('Event: Wallet disconnected.');
+      // Disable buttons after disconnection
       disconnectButton.disabled = true;
       sendTransactionButton.disabled = true;
       signMessageButton.disabled = true;
       chainSelect.disabled = true;
-    }
-  };
+    };
 
-  /**
-   * Handler for disconnect events.
-   */
-  const handleDisconnectEvent = () => {
-    updateWalletInfo({
-      status: 'Wallet disconnected',
-      account: null,
-      allAccounts: null,
-      balance: null,
-      network: null,
-      version: null,
-      chainId: null,
-    });
-    addLog('Event: Wallet disconnected.');
-    // Disable buttons after disconnection
-    disconnectButton.disabled = true;
-    sendTransactionButton.disabled = true;
-    signMessageButton.disabled = true;
-    chainSelect.disabled = true;
-  };
+    // Network Changed Listener
+    const handleNetworkChanged = (networkInfo) => {
+      updateWalletInfo({ chainId: networkInfo.chainId });
+      addLog(`Event: Network changed to Chain ${networkInfo.chainId}`);
+      fetchCurrentNetwork();
+    };
 
-  /**
-   * Handler for network changes.
-   * @param {Object} networkInfo - The network information.
-   */
-  const handleNetworkChanged = (networkInfo) => {
-    updateWalletInfo({ chainId: networkInfo.chainId });
-    addLog(`Event: Network changed to Chain ${networkInfo.chainId}`);
+    // Register Event Listeners
+    window.ssc.onAccountChanged(handleAccountChanged);
+    window.ssc.onDisconnect(handleDisconnectEvent);
+    window.ssc.onNetworkChanged(handleNetworkChanged);
+
+    // Cleanup Function to Remove Event Listeners
+    const cleanupEventListeners = () => {
+      window.ssc.offAccountChanged(handleAccountChanged);
+      window.ssc.offDisconnect(handleDisconnectEvent);
+      window.ssc.offNetworkChanged(handleNetworkChanged);
+      addLog('Cleaned up event listeners.');
+    };
+
+    // Register cleanup on page unload
+    window.addEventListener('beforeunload', cleanupEventListeners);
   };
 
   /**
@@ -380,25 +389,32 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchBalance();
         fetchVersion();
         fetchChainId();
-        if (acc && chainIdEl.textContent !== 'N/A') {
-          chainSelect.value = chainIdEl.textContent;
+        fetchCurrentNetwork();
+        // Set selected chain if available
+        try {
+          const cid = await window.ssc.getChainId();
+          if (cid?.chainId) {
+            chainSelect.value = cid.chainId;
+            setSelectedChain(chainId);
+          }
+        } catch (err) {
+          addLog(`Error fetching initial chain ID: ${err.message}`);
         }
       }
     }
   };
 
   /**
-   * Initializes the application.
+   * Initializes the application by registering event listeners and fetching initial state.
    */
   const init = async () => {
     registerEventListeners();
     await fetchInitialState();
   };
 
-  // Initialize the app
   init();
 
-  // Event Listeners for Buttons and Select Box
+
   signMessageButton.addEventListener('click', signMessage);
   connectButton.addEventListener('click', connectWallet);
   disconnectButton.addEventListener('click', disconnectWallet);
@@ -408,9 +424,5 @@ document.addEventListener('DOMContentLoaded', () => {
     changeNet(selectedChain);
   });
   promptInstallButton.addEventListener('click', promptInstall);
-
-  const promptCreatorButton = document.getElementById('promptCreatorButton');
-  if (promptCreatorButton) {
-    promptCreatorButton.addEventListener('click', promptCreator);
-  }
+  promptCreatorButton.addEventListener('click', promptCreator);
 });
