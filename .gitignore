@@ -20,7 +20,6 @@ Thumbs.db
 *.tmp
 
 # Lockfiles (use only one package manager)
-pnpm-lock.yaml
 yarn.lock
 package-lock.json
 
