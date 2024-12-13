@@ -1,0 +1,10 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "packages/react-example-app/package.json",
+        "use": "@vercel/node"
+      }
+    ],
+    "buildCommand": "node scripts/fix-workspace-deps.js && pnpm install && pnpm run build"
+  }

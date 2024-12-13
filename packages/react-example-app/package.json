@@ -4,9 +4,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "fix-deps": "node fix-workspace-deps.js"
   },
   "dependencies": {
+    "@vercel/node": "^5.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "scheduler": "^0.25.0",
