@@ -9,7 +9,12 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "supra-starkey-connect": ["../../packages/supra-starkey-connect/dist"],
+      "supra-starkey-connect/*": ["../../packages/supra-starkey-connect/dist/*"]
+    },
   },
   "include": ["src"]
 }
