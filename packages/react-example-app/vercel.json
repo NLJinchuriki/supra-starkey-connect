@@ -6,5 +6,6 @@
         "use": "@vercel/node"
       }
     ],
-    "buildCommand": "node scripts/fix-workspace-deps.js && pnpm install && pnpm run build"
+    "buildCommand": "node scripts/fix-workspace-deps.js && pnpm install && pnpm run build",
+     "outputDirectory": "dist"
   }
