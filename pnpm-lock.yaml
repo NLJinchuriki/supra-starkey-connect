@@ -24,8 +24,8 @@ importers:
         specifier: ^0.25.0
         version: 0.25.0
       supra-starkey-connect:
-        specifier: workspace:*
-        version: link:../supra-starkey-connect
+        specifier: ^1.0.5
+        version: 1.0.5(esbuild@0.18.20)
     devDependencies:
       '@types/react':
         specifier: ^18.0.25
@@ -1354,6 +1354,9 @@ packages:
     resolution: {integrity: sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q==}
     engines: {node: '>=10'}
 
+  supra-starkey-connect@1.0.5:
+    resolution: {integrity: sha512-BGnKjEKEqzaVE3lJwjq5hSJCF5HVXFe0/wr/VvM8//AuKa6saonji6YAubhocS3ZKTN/OiCRya1SLXDMq65nLA==}
+
   thenify-all@1.6.0:
     resolution: {integrity: sha512-RNxQH/qI8/t3thXJDwcstUO4zeqo64+Uy/+sNVRBx4Xn2OX+OZ9oP+iJnNFqplFra2ZUVeKCSa2oVWi3T4uVmA==}
     engines: {node: '>=0.8'}
@@ -1713,9 +1716,19 @@ snapshots:
     dependencies:
       esbuild: 0.17.19
 
+  '@esbuild-plugins/node-globals-polyfill@0.2.3(esbuild@0.18.20)':
+    dependencies:
+      esbuild: 0.18.20
+
   '@esbuild-plugins/node-modules-polyfill@0.2.2(esbuild@0.17.19)':
     dependencies:
       esbuild: 0.17.19
+      escape-string-regexp: 4.0.0
+      rollup-plugin-node-polyfills: 0.2.1
+
+  '@esbuild-plugins/node-modules-polyfill@0.2.2(esbuild@0.18.20)':
+    dependencies:
+      esbuild: 0.18.20
       escape-string-regexp: 4.0.0
       rollup-plugin-node-polyfills: 0.2.1
 
@@ -2767,6 +2780,15 @@ snapshots:
   supports-color@8.1.1:
     dependencies:
       has-flag: 4.0.0
+
+  supra-starkey-connect@1.0.5(esbuild@0.18.20):
+    dependencies:
+      '@esbuild-plugins/node-globals-polyfill': 0.2.3(esbuild@0.18.20)
+      '@esbuild-plugins/node-modules-polyfill': 0.2.2(esbuild@0.18.20)
+      buffer: 6.0.3
+      tweetnacl: 1.0.3
+    transitivePeerDependencies:
+      - esbuild
 
   thenify-all@1.6.0:
     dependencies:
