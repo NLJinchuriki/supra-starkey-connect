@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
       {
-        "src": "packages/react-example-app/package.json",
+        "src": "package.json",
         "use": "@vercel/node"
       }
     ],
