@@ -11,7 +11,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "scheduler": "^0.25.0",
-    "supra-starkey-connect": "workspace:*"
+    "supra-starkey-connect": "^1.0.5"
   },
   "devDependencies": {
     "@types/react": "^18.0.25",
