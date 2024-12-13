@@ -8,7 +8,7 @@ For an overview of the entire monorepo and example applications, please refer to
 
 - **Type Safety**: Leveraging TypeScript to ensure type-safe interactions with the StarKey Supra provider.
 - **Event Handling**: Simplified event listeners for account changes, disconnections, and network changes.
-- **Multiple Build Formats**: Supports ESM, CJS, and IIFE builds to cater to different environments.
+- **Multiple Build Formats**: Supports ESM, CJS, and (BROWSER) builds to cater to different environments.
 - **Comprehensive Methods**: Includes methods for connecting, disconnecting, sending transactions, signing messages, and more.
 - **Undocumented Methods Support**: Exposes additional methods that are currently undocumented by StarKey, with the intention to support them fully once more information is available.
 
@@ -24,15 +24,11 @@ pnpm add supra-starkey-connect
 
 **For Browser (Vanilla JavaScript)**
 
-Add this tag for browser implementation
+(You can use the browser-friendly build provided by the library via a CDN)
 
 ```typescript
 <script src="https://unpkg.com/supra-starkey-connect/dist/browser.iife.js"></script>
 ```
-
-You can use the browser-friendly IIFE build provided by the library via a CDN:
-
-Ensure that your project is part of the monorepo workspace as defined in the `pnpm-workspace.yaml`.
 
 ## Usage
 

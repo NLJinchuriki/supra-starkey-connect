@@ -76,9 +76,56 @@ export interface StarkeyProvider {
   getVersion(): Promise<string>
   changeNetwork(options: { chainId: string }): Promise<{ chainId: string }>
 
+  /**
+   * Registers a callback for accountChanged events.
+   * @param event - The event name.
+   * @param handler - The callback function.
+   */
   on(event: 'accountChanged', handler: (accounts: string[]) => void): void
+
+  /**
+   * Registers a callback for disconnect events.
+   * @param event - The event name.
+   * @param handler - The callback function.
+   */
   on(event: 'disconnect', handler: (info: any) => void): void
+
+  /**
+   * Registers a callback for networkChanged events.
+   * @param event - The event name.
+   * @param handler - The callback function.
+   */
   on(
+    event: 'networkChanged',
+    handler: (networkInfo: { chainId: string }) => void
+  ): void
+}
+
+/**
+ * Extended StarkeyProvider interface that includes the 'off' method.
+ * Someday Starkey will implement .off :P
+ */
+export interface StarkeyProviderWithOff extends StarkeyProvider {
+  /**
+   * Unregisters a callback for accountChanged events.
+   * @param event - The event name.
+   * @param handler - The callback function to unregister.
+   */
+  off(event: 'accountChanged', handler: (accounts: string[]) => void): void
+
+  /**
+   * Unregisters a callback for disconnect events.
+   * @param event - The event name.
+   * @param handler - The callback function to unregister.
+   */
+  off(event: 'disconnect', handler: (info: any) => void): void
+
+  /**
+   * Unregisters a callback for networkChanged events.
+   * @param event - The event name.
+   * @param handler - The callback function to unregister.
+   */
+  off(
     event: 'networkChanged',
     handler: (networkInfo: { chainId: string }) => void
   ): void

@@ -4,6 +4,7 @@ import { remove0xPrefix, generateNonce } from './utils'
 
 import {
   StarkeyProvider,
+  StarkeyProviderWithOff,
   SendTransactionParams,
   Balance,
   SignMessageParams,
@@ -26,6 +27,22 @@ export class SupraStarkeyConnect {
     this._handleAccountChanged = this._handleAccountChanged.bind(this)
     this._handleDisconnect = this._handleDisconnect.bind(this)
     this._handleNetworkChanged = this._handleNetworkChanged.bind(this)
+  }
+
+  /**
+   * Helper method to test if a given provider supports the `off` method.
+   * Acts as a type guard to ensure `provider` is not null and has the `off` method.
+   * @param provider - The StarkeyProvider instance to check.
+   * @returns {provider is StarkeyProviderWithOff} True if `off` exists, false otherwise.
+   */
+  private hasOffMethod(
+    provider: StarkeyProvider | null
+  ): provider is StarkeyProviderWithOff {
+    return (
+      provider !== null &&
+      'off' in provider &&
+      typeof provider.off === 'function'
+    )
   }
 
   /**
@@ -57,6 +74,71 @@ export class SupraStarkeyConnect {
     this.provider.on('accountChanged', this._handleAccountChanged)
     this.provider.on('disconnect', this._handleDisconnect)
     this.provider.on('networkChanged', this._handleNetworkChanged)
+  }
+
+  /**
+   * Unregisters a callback for accountChanged events.
+   * @param {(accounts: string[]) => void} callback - The callback function to unregister.
+   */
+  offAccountChanged(callback: (accounts: string[]) => void): void {
+    this._accountChangedCallbacks = this._accountChangedCallbacks.filter(
+      (cb) => cb !== callback
+    )
+    const provider = this.provider
+    if (this.hasOffMethod(provider)) {
+      provider.off('accountChanged', callback)
+    }
+  }
+
+  /**
+   * Unregisters a callback for disconnect events.
+   * @param {(info: any) => void} callback - The callback function to unregister.
+   */
+  offDisconnect(callback: (info: any) => void): void {
+    this._disconnectCallbacks = this._disconnectCallbacks.filter(
+      (cb) => cb !== callback
+    )
+    const provider = this.provider
+    if (this.hasOffMethod(provider)) {
+      provider.off('disconnect', callback)
+    }
+  }
+
+  /**
+   * Unregisters a callback for networkChanged events.
+   * @param {(networkInfo: { chainId: string }) => void} callback - The callback function to unregister.
+   */
+  offNetworkChanged(
+    callback: (networkInfo: { chainId: string }) => void
+  ): void {
+    this._networkChangedCallbacks = this._networkChangedCallbacks.filter(
+      (cb) => cb !== callback
+    )
+    const provider = this.provider
+    if (this.hasOffMethod(provider)) {
+      provider.off('networkChanged', callback)
+    }
+  }
+
+  /**
+   * Cleanup all listeners for accountChanged, disconnect, and networkChanged events.
+   */
+  cleanupListeners(): void {
+    const provider = this.provider
+    if (this.hasOffMethod(provider)) {
+      // Cleanup all listeners on the provider
+      this._accountChangedCallbacks.forEach((cb) =>
+        provider.off('accountChanged', cb)
+      )
+      this._disconnectCallbacks.forEach((cb) => provider.off('disconnect', cb))
+      this._networkChangedCallbacks.forEach((cb) =>
+        provider.off('networkChanged', cb)
+      )
+    }
+    // Clear internal arrays
+    this._accountChangedCallbacks = []
+    this._disconnectCallbacks = []
+    this._networkChangedCallbacks = []
   }
 
   /**
@@ -173,8 +255,7 @@ export class SupraStarkeyConnect {
    *
    * A higher-level signing function that performs the signing and verification logic.
    * This abstracts away the raw signing process and handles Uint8Array conversion.
-   * @param {string} signMessage - The message to sign as a plain string.
-   * @param {string} nonce - A unique nonce to ensure the signature is unique.
+   * @param {SignMessageParams} params - The message and nonce to be signed.
    * @returns {Promise<{ verified: boolean, response: SignMessageResponse }>}
    */
   async signMessage(
