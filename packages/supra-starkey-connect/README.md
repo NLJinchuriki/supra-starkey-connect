@@ -459,7 +459,7 @@ try {
 
    - The `rawTxPayload` is validated against a predefined Zod schema (`RawTxPayloadArraySchema`). This validation ensures that all elements of the payload are correctly typed and adhere to the expected formats.
 
-   - **Zod Schema Example:**
+   - **Zod Schema Used for validating:**
 
      ```typescript
      import { z } from 'zod'
