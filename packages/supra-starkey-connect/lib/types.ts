@@ -1,3 +1,11 @@
+import { TypeTag } from './builderTypes/builderTypes'
+
+export interface OptionalTransactionPayloadArgs {
+  maxGas?: number
+  gasUnitPrice?: number
+  txExpiryTime?: number
+}
+
 /**
  * Parameters for sending a transaction.
  */
@@ -6,6 +14,7 @@ export interface SendTransactionParams {
   to: string
   value: string | number
   data?: string
+  chainId?: string
 }
 
 /**
@@ -35,6 +44,17 @@ export interface SignMessageResponse {
   address: string
 }
 
+export type RawTxPayload = [
+  string, // sender address
+  number, // sender sequence number
+  string, // module address
+  string, // module name
+  string, // function name
+  TypeTag[], // function type arguments
+  Uint8Array[], // function arguments
+  OptionalTransactionPayloadArgs? // optional transaction payload arguments
+]
+
 /**
  * Defines the StarkeyProvider interface.
  */
@@ -42,8 +62,8 @@ export interface StarkeyProvider {
   connect(): Promise<string[]>
   disconnect(): Promise<void>
   account(): Promise<string[]>
-  currentNetwork: string
-  getChainId(): Promise<{ chainId: string }>
+  currentNetwork: string | null
+  getChainId(): Promise<{ chainId: string } | null>
   sendTransaction(tx: SendTransactionParams): Promise<string>
 
   /**
@@ -61,16 +81,26 @@ export interface StarkeyProvider {
   signMessageRaw(params: SignMessageParams): Promise<SignMessageResponse>
 
   /**
-   * Undocumented method. Parameters can be any object.
-   * @param params - Undocumented parameters. Refer to documentation or contact starKey support for details.
+   * Signs and sends a transaction.
+   * @param {RawTxPayload} RawTxPayload - The raw tx params object.
+   * @param {string | number} [value=''] - The value to send with the transaction (optional).
    */
-  waitForTransactionWithResult(params: any): Promise<any>
+  signAndSendTransaction(
+    rawTxPayload: RawTxPayload,
+    value: string | number
+  ): Promise<string>
 
   /**
    * Undocumented method. Parameters can be any object.
    * @param params - Undocumented parameters. Refer to documentation or contact starKey support for details.
    */
-  createRawTransactionData(params: any): Promise<any>
+  waitForTransactionWithResult(txHash: string): Promise<any>
+
+  /**
+   * Undocumented method. Parameters can be any object.
+   * @param params - the parameterse for creating Raw Transaction data
+   */
+  createRawTransactionData(params: RawTxPayload): Promise<string>
 
   balance(): Promise<Balance>
   getVersion(): Promise<string>
@@ -137,4 +167,13 @@ export interface StarkeyProviderWithOff extends StarkeyProvider {
 export interface StarkeyObject {
   supra: StarkeyProvider
   getVersion(): Promise<string>
+}
+
+import * as BuilderTypes from './builderTypes/builderTypes'
+
+/**
+ * BCS (Binary Canonical Serialization) utilities.
+ */
+export const TxnBuilderTypes = {
+  ...BuilderTypes
 }

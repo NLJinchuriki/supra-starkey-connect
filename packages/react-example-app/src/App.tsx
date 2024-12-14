@@ -1,12 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react'
-
-import { ssc } from 'supra-starkey-connect'
-import type { Balance } from 'supra-starkey-connect'
+import { ssc, BCS } from 'supra-starkey-connect'
+import type { Balance, RawTxPayload } from 'supra-starkey-connect'
 
 import './App.css'
 
 /**
- * React Example for interacting with the StarKey Supra wallet.
+ * React Application for interacting with the StarKey Supra wallet.
+ *
+ * Features:
+ * - Connect/Disconnect Wallet
+ * - View Account Information and Balance
+ * - Send Test Transactions
+ * - Sign Messages
+ * - Sign and Send Transactions
+ * - Interaction Logs
  */
 function App() {
   const [status, setStatus] = useState('Not Connected')
@@ -24,6 +31,10 @@ function App() {
   const [logs, setLogs] = useState<string[]>([])
 
   const [selectedChain, setSelectedChain] = useState<string>('1')
+
+  const [rawTxLoading, setRawTxLoading] = useState<boolean>(false)
+  const [rawTxHash, setRawTxHash] = useState<string | null>(null)
+  const [rawTxError, setRawTxError] = useState<string | null>(null)
 
   useEffect(() => {
     if (logContainerRef.current) {
@@ -159,7 +170,68 @@ function App() {
   }
 
   /**
+   * Sends and signs a raw transaction.
+   */
+  const handleSignAndSendTransaction = async () => {
+    if (!account) {
+      setStatus('No connected account. Connect wallet first.')
+      addLog('Sign and Send Transaction failed. No connected account.')
+      return
+    }
+
+    try {
+      setRawTxLoading(true)
+      setRawTxHash(null)
+      setRawTxError(null)
+
+      addLog('~~ sendRawTransaction ~~~')
+
+      // Example Data:
+      const slot_id: bigint = BigInt(4)
+      const coins: bigint = BigInt(0)
+      const reference_price: bigint = BigInt(0)
+
+      const rawTxPayload: RawTxPayload = [
+        account,
+        0,
+        '0x8943a2c0dc9b08597cbde5d806bf86c69beb7007a4ac401a7f5b520f994e145c',
+        'slot_prediction',
+        'create_prediction',
+        [],
+        [
+          BCS.bcsSerializeU256(slot_id),
+          BCS.bcsSerializeUint64(coins),
+          BCS.bcsSerializeUint64(reference_price)
+        ]
+      ]
+
+      addLog(
+        `Transaction beeing send: ${JSON.stringify(rawTxPayload, null, 2)}`
+      )
+
+      addLog('Transaction created')
+
+      // Sign and Send
+      const txHash = await ssc.signAndSendTransaction(rawTxPayload)
+
+      if (txHash) {
+        setRawTxHash(txHash)
+        setStatus(`Transaction sent! Hash: ${txHash}`)
+        return addLog(`Transaction sent successfully. Hash: ${txHash}`)
+      }
+      addLog('Failed')
+    } catch (err: any) {
+      setRawTxError(err.message)
+      setStatus(`Transaction failed: ${err.message}`)
+      addLog(`signAndSendTransaction Failed: ${err.message}`)
+    } finally {
+      setRawTxLoading(false)
+    }
+  }
+
+  /**
    * Changes the network chain based on the selected chain ID.
+   * @param {string} chain - The chain ID to switch to.
    */
   const changeNet = async (chain: string) => {
     try {
@@ -276,7 +348,6 @@ function App() {
    * Cleans up the listeners on component unmount.
    */
   useEffect(() => {
-    // Account Changed Listener
     const handleAccountChanged = (accounts: string[]) => {
       setAccount(accounts[0] || null)
       setStatus(`Account changed: ${accounts[0] || 'No account'}`)
@@ -287,7 +358,6 @@ function App() {
       }
     }
 
-    // Disconnect Listener
     const handleDisconnect = () => {
       setAccount(null)
       setAllAccounts(null)
@@ -299,20 +369,17 @@ function App() {
       addLog('Event: Wallet disconnected.')
     }
 
-    // Network Changed Listener
     const handleNetworkChanged = (networkInfo: { chainId: string }) => {
       setStatus(`Network changed: ${JSON.stringify(networkInfo)}`)
       setChainId(networkInfo.chainId)
       addLog(`Event: Network changed to Chain ${networkInfo.chainId}`)
-      fetchCurrentNetwork() // Fetch updated network info
+      fetchCurrentNetwork()
     }
 
-    // Register Event Listeners
     ssc.onAccountChanged(handleAccountChanged)
     ssc.onDisconnect(handleDisconnect)
     ssc.onNetworkChanged(handleNetworkChanged)
 
-    // Cleanup Function to Remove Event Listeners
     return () => {
       ssc.offAccountChanged(handleAccountChanged)
       ssc.offDisconnect(handleDisconnect)
@@ -351,6 +418,7 @@ function App() {
 
   /**
    * Handles changes to the selected chain.
+   * @param {React.ChangeEvent<HTMLSelectElement>} e - The change event.
    */
   const handleChainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newChain = e.target.value
@@ -429,6 +497,7 @@ function App() {
       </div>
 
       <div className="content-wrapper">
+        {/* Message Signing Section */}
         <div>
           <h2 className="logs-header">Message Signing</h2>
           <div className="wallet-info">
@@ -436,6 +505,7 @@ function App() {
               placeholder="Enter message to sign"
               value={signMessage}
               onChange={(e) => setSignMessage(e.target.value)}
+              className="textarea"
             />
             <button
               className="btn"
@@ -452,13 +522,41 @@ function App() {
               {signMessageLoading ? 'Signing...' : 'Sign Message'}
             </button>
             {signatureResponse && (
-              <div>
+              <div className="response-container">
                 <p>Signature Response:</p>
                 <pre>{JSON.stringify(signatureResponse, null, 2)}</pre>
               </div>
             )}
           </div>
         </div>
+
+        {/* Sign and Send Transaction Section */}
+        <div>
+          <h2 className="logs-header">Sign and Send Transaction</h2>
+          <div className="wallet-info">
+            <button
+              className="btn"
+              onClick={handleSignAndSendTransaction}
+              disabled={!account || rawTxLoading}
+            >
+              {rawTxLoading ? 'Sending...' : 'Sign and Send Transaction'}
+            </button>
+            {rawTxHash && (
+              <div className="response-container">
+                <p>Transaction Hash:</p>
+                <pre>{rawTxHash}</pre>
+              </div>
+            )}
+            {rawTxError && (
+              <div className="error-container">
+                <p>Error:</p>
+                <pre>{rawTxError}</pre>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Interaction Logs Section */}
         <div>
           <h2 className="logs-header">Interaction Logs</h2>
 

@@ -24,8 +24,8 @@ importers:
         specifier: ^0.25.0
         version: 0.25.0
       supra-starkey-connect:
-        specifier: ^1.0.5
-        version: 1.0.5(esbuild@0.18.20)
+        specifier: workspace:*
+        version: link:../supra-starkey-connect
     devDependencies:
       '@types/react':
         specifier: ^18.0.25
@@ -57,6 +57,9 @@ importers:
       tweetnacl:
         specifier: ^1.0.3
         version: 1.0.3
+      zod:
+        specifier: ^3.24.1
+        version: 3.24.1
     devDependencies:
       tsup:
         specifier: ^6.0.0
@@ -1354,9 +1357,6 @@ packages:
     resolution: {integrity: sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q==}
     engines: {node: '>=10'}
 
-  supra-starkey-connect@1.0.5:
-    resolution: {integrity: sha512-BGnKjEKEqzaVE3lJwjq5hSJCF5HVXFe0/wr/VvM8//AuKa6saonji6YAubhocS3ZKTN/OiCRya1SLXDMq65nLA==}
-
   thenify-all@1.6.0:
     resolution: {integrity: sha512-RNxQH/qI8/t3thXJDwcstUO4zeqo64+Uy/+sNVRBx4Xn2OX+OZ9oP+iJnNFqplFra2ZUVeKCSa2oVWi3T4uVmA==}
     engines: {node: '>=0.8'}
@@ -1582,6 +1582,9 @@ packages:
     resolution: {integrity: sha512-b4JR1PFR10y1mKjhHY9LaGo6tmrgjit7hxVIeAmyMw3jegXR4dhYqLaQF5zMXZxY7tLpMyJeLjr1C4rLmkVe8g==}
     engines: {node: '>=12.20'}
 
+  zod@3.24.1:
+    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
+
 snapshots:
 
   '@ampproject/remapping@2.3.0':
@@ -1716,19 +1719,9 @@ snapshots:
     dependencies:
       esbuild: 0.17.19
 
-  '@esbuild-plugins/node-globals-polyfill@0.2.3(esbuild@0.18.20)':
-    dependencies:
-      esbuild: 0.18.20
-
   '@esbuild-plugins/node-modules-polyfill@0.2.2(esbuild@0.17.19)':
     dependencies:
       esbuild: 0.17.19
-      escape-string-regexp: 4.0.0
-      rollup-plugin-node-polyfills: 0.2.1
-
-  '@esbuild-plugins/node-modules-polyfill@0.2.2(esbuild@0.18.20)':
-    dependencies:
-      esbuild: 0.18.20
       escape-string-regexp: 4.0.0
       rollup-plugin-node-polyfills: 0.2.1
 
@@ -2781,15 +2774,6 @@ snapshots:
     dependencies:
       has-flag: 4.0.0
 
-  supra-starkey-connect@1.0.5(esbuild@0.18.20):
-    dependencies:
-      '@esbuild-plugins/node-globals-polyfill': 0.2.3(esbuild@0.18.20)
-      '@esbuild-plugins/node-modules-polyfill': 0.2.2(esbuild@0.18.20)
-      buffer: 6.0.3
-      tweetnacl: 1.0.3
-    transitivePeerDependencies:
-      - esbuild
-
   thenify-all@1.6.0:
     dependencies:
       thenify: 3.3.1
@@ -3011,3 +2995,5 @@ snapshots:
     optional: true
 
   yocto-queue@1.1.1: {}
+
+  zod@3.24.1: {}

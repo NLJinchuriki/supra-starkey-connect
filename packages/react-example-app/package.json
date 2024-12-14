@@ -2,16 +2,15 @@
   "name": "react-example-app",
   "version": "1.0.5",
   "scripts": {
-    "dev": "node scripts/fix-workspace-deps.js --mode dev",
+    "dev": "pnpm vite",
     "build": "vite build",
-    "build:local": "node scripts/fix-workspace-deps.js --mode build",
     "preview": "vite preview"
   },
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "scheduler": "^0.25.0",
-    "supra-starkey-connect": "^1.0.5"
+    "supra-starkey-connect": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^18.0.25",

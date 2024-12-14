@@ -118,5 +118,5 @@ Contributions are welcome! Please open issues and submit pull requests for any e
 This project is licensed under the [MIT License](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/LICENSE).
 
 ## Made with :heart: Team NLJinchūriki
-![image](https://github.com/user-attachments/assets/c8494a01-529b-44fe-9421-b2c9e5805d8a)
 
+![image](https://github.com/user-attachments/assets/c8494a01-529b-44fe-9421-b2c9e5805d8a)

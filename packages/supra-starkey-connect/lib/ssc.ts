@@ -1,6 +1,10 @@
 import nacl from 'tweetnacl'
 import { Buffer } from 'buffer'
-import { remove0xPrefix, generateNonce } from './utils'
+import {
+  remove0xPrefix,
+  generateNonce,
+  setOptionalTransactionPayloadArgs
+} from './utils'
 
 import {
   StarkeyProvider,
@@ -8,8 +12,12 @@ import {
   SendTransactionParams,
   Balance,
   SignMessageParams,
-  SignMessageResponse
+  SignMessageResponse,
+  RawTxPayload
 } from './types'
+import { validateRawTxPayload } from './validators'
+
+import { BCS } from './bcs/index'
 
 /**
  * A class that provides a wrapper around the StarKey Supra wallet provider.
@@ -251,6 +259,64 @@ export class SupraStarkeyConnect {
   }
 
   /**
+   * Signs and sends a transaction.
+   *
+   * @param {RawTxPayloadArray} rawTxPayloadArray - The raw transaction payload array.
+   * @param {string | number} [value=''] - The value to send with the transaction (optional).
+   * @returns {Promise<string>} The transaction hash.
+   * @throws Will throw an error if signing or sending fails.
+   */
+  async signAndSendTransaction(
+    rawTxPayload: RawTxPayload,
+    value: string | number = ''
+  ): Promise<string> {
+    if (!this.provider) {
+      this.init()
+    }
+
+    if (!this.provider) {
+      throw new Error('Provider not initialized.')
+    }
+
+    try {
+      const updatedRawTxPayload =
+        setOptionalTransactionPayloadArgs(rawTxPayload)
+
+      validateRawTxPayload(updatedRawTxPayload)
+
+      const rawTransaction = await this.provider.createRawTransactionData(
+        updatedRawTxPayload
+      )
+
+      const chainIdResult = await this.getChainId()
+      if (!chainIdResult) {
+        throw new Error('Failed to retrieve chainId.')
+      }
+      const { chainId } = chainIdResult
+
+      const params: SendTransactionParams = {
+        data: rawTransaction,
+        from: updatedRawTxPayload[0], // senderAddr
+        to: updatedRawTxPayload[2], // moduleAddr
+        chainId,
+        value: value
+      }
+
+      const txHash = await this.sendTransaction(params)
+      if (!txHash) {
+        throw new Error(
+          'Sending transaction failed, please check wallet for error'
+        )
+      }
+
+      return txHash
+    } catch (error) {
+      console.error('Error in signAndSendTransaction:', error)
+      throw error
+    }
+  }
+
+  /**
    * Partially verified function. Needs more input from the StarKey team.
    *
    * A higher-level signing function that performs the signing and verification logic.
@@ -290,6 +356,17 @@ export class SupraStarkeyConnect {
     throw new Error('Signing failed, no response received.')
   }
 
+  /**.
+   *
+   * @param {RawTxObject} params - Raw Transaction Data
+   * @returns {Promise<string>} The raw transaction data.
+   * @throws Will throw an error if the provider is not initialized.
+   */
+  async createRawTransactionData(params: RawTxPayload): Promise<string> {
+    if (!this.provider) throw new Error('Provider not initialized')
+    return await this.provider.createRawTransactionData(params)
+  }
+
   /**
    * Undocumented function. Needs more input from the StarKey team.
    *
@@ -303,21 +380,6 @@ export class SupraStarkeyConnect {
     )
     if (!this.provider) throw new Error('Provider not initialized')
     return await this.provider.waitForTransactionWithResult(params)
-  }
-
-  /**
-   * Undocumented function. Needs more input from the StarKey team.
-   *
-   * @param {any} params - Undocumented parameters. Refer to documentation or contact support for details.
-   * @returns {Promise<any>} The raw transaction data.
-   * @throws Will throw an error if the provider is not initialized.
-   */
-  async createRawTransactionData_undocumented(params: any): Promise<any> {
-    console.warn(
-      'createRawTransactionData is undocumented. Please refer to the starkey documentation or contact starkey support for more details.'
-    )
-    if (!this.provider) throw new Error('Provider not initialized')
-    return await this.provider.createRawTransactionData(params)
   }
 
   /**
@@ -415,8 +477,9 @@ export class SupraStarkeyConnect {
     }
   }
 }
+export * from './types'
+export { BCS }
 
 export const ssc = new SupraStarkeyConnect()
 ssc.init()
-export * from './types'
 export default ssc
