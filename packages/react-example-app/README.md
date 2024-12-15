@@ -2,6 +2,8 @@
 
 The **React Example App** demonstrates how to integrate and utilize the `supra-starkey-connect` library within a React environment. It provides a user-friendly interface to interact with the StarKey Supra wallet, showcasing functionalities such as connecting wallets, sending transactions, signing messages, and managing network changes.
 
+- **React Example App Live Demo**: [Live Demo on vercel](https://supra-starkey-connect-react.vercel.app/)
+
 ## Table of Contents
 
 - [Features](#features)
