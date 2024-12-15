@@ -1,3 +1,14 @@
+import nacl from 'tweetnacl'
+import { Buffer } from 'buffer'
+
+import {
+  DEFAULT_GAS_PRICE,
+  DEFAULT_MAX_GAS_UNITS,
+  DEFAULT_TX_EXPIRATION_DURATION,
+  MILLISECONDS_PER_SECOND
+} from './constants'
+import { OptionalTransactionPayloadArgs, RawTxPayload } from './types'
+
 /**
  * Removes the `0x` prefix from a hexadecimal string if it exists.
  *
@@ -13,9 +24,6 @@
 export const remove0xPrefix = (value: string): string =>
   value.startsWith('0x') ? value.slice(2) : value
 
-import nacl from 'tweetnacl'
-import { Buffer } from 'buffer'
-
 /**
  * Generates a random nonce using tweetnacl's `randomBytes`.
  *
@@ -29,4 +37,51 @@ export const generateNonce = (message: string): string => {
 
   const messageHash = Buffer.from(message).toString('hex').slice(0, 16)
   return (randomHex + messageHash).slice(0, 32)
+}
+
+/**
+ * Sets default values for the `optionalTransactionPayloadArgs` element in a RawTxPayloadArray.
+ *
+ * This function ensures that the `optionalTransactionPayloadArgs` field contains all necessary
+ * properties by assigning default values where they are missing. It helps prevent transactions
+ * from failing due to missing optional parameters.
+ *
+ * @param {RawTxPayloadArray} rawTxPayloadArray - The raw transaction payload array to be augmented with default payload args.
+ * @returns {RawTxPayloadArray} A new RawTxPayloadArray with `optionalTransactionPayloadArgs` properly set.
+ *
+ */
+export const setOptionalTransactionPayloadArgs = (
+  rawTxPayload: RawTxPayload
+): RawTxPayload => {
+  const currentTimeInSeconds =
+    Math.ceil(Date.now() / MILLISECONDS_PER_SECOND) +
+    DEFAULT_TX_EXPIRATION_DURATION
+
+  const [
+    senderAddr,
+    senderSequenceNumber,
+    moduleAddr,
+    moduleName,
+    functionName,
+    functionTypeArgs,
+    functionArgs,
+    optionalArgs
+  ] = rawTxPayload
+
+  const updatedOptionalArgs: OptionalTransactionPayloadArgs = {
+    maxGas: optionalArgs?.maxGas ?? DEFAULT_MAX_GAS_UNITS,
+    gasUnitPrice: optionalArgs?.gasUnitPrice ?? DEFAULT_GAS_PRICE,
+    txExpiryTime: optionalArgs?.txExpiryTime ?? currentTimeInSeconds
+  }
+
+  return [
+    senderAddr,
+    senderSequenceNumber,
+    moduleAddr,
+    moduleName,
+    functionName,
+    functionTypeArgs,
+    functionArgs,
+    updatedOptionalArgs
+  ]
 }

@@ -2,18 +2,15 @@
   "name": "react-example-app",
   "version": "1.0.5",
   "scripts": {
-    "dev": "vite",
+    "dev": "pnpm vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "fix-deps": "node fix-workspace-deps.js"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@vercel/node": "^5.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "scheduler": "^0.25.0",
-    "supra-starkey-connect": "workspace:*",
-    "vite-plugin-node-polyfills": "^0.22.0"
+    "supra-starkey-connect": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^18.0.25",
