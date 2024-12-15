@@ -70,8 +70,8 @@ interface SendTransactionParams {
 const transaction = {
   from: '0xYourAccountAddress',
   to: '0xRecipientAddress',
-  value: '100000000', // Value in smallest unit
-  data: '0x' // Optional data payload
+  value: '100000000',
+  data: '0x'
 }
 
 const txHash = await ssc.sendTransaction(transaction)
@@ -329,14 +329,6 @@ export interface SignMessageResponse {
 async signMessage(params: SignMessageParams): Promise<{ verified: boolean; response: SignMessageResponse }>
 ```
 
-**Utilities Used Internally:**
-
-1. **`remove0xPrefix(value: string): string`**
-   Removes the `0x` prefix from a hexadecimal string, if it exists.
-
-2. **`generateNonce(message: string): string`**
-   Generates a random nonce using `tweetnacl`'s `randomBytes`. This ensures unique signing for each message. If no nonce is provided, it generates one.
-
 **Example Usage:**
 
 ```typescript
@@ -566,6 +558,23 @@ try {
 
 ---
 
+#### `createRawTransactionDat(params: RawTxPayload)`
+
+```typescript
+async createRawTransactionData_undocumented(params: RawTxPayload): Promise<string>
+```
+
+**Example:**
+
+```typescript
+try {
+  const rawData = await ssc.createRawTransactionData(rawTxPayload)
+  console.log(`Raw Transaction Data:`, rawData)
+} catch (error) {
+  console.error(`Create Raw Transaction Data Error: ${error.message}`)
+}
+```
+
 ### Event listeners
 
 #### `onAccountChanged(callback: (accounts: string[]) => void)`
@@ -622,15 +631,9 @@ The `supra-starkey-connect` library currently exposes several methods that are *
 
 ### List of Undocumented Methods
 
-- **`signMessage(params: SignMessageParams): Promise<SignMessageResponse>`**
-- **`waitForTransactionWithResult_undocumented(params: any): Promise<any>`**
-- **`createRawTransactionData_undocumented(params: any): Promise<any>`**
-
 **Note:** Use these methods with caution, as their behavior may change without notice. We recommend monitoring StarKey's official channels for updates and additional documentation regarding these functions.
 
 #### `waitForTransactionWithResult_undocumented(params: any)`
-
-**Undocumented Function**
 
 Waits for a transaction with result. This function is currently undocumented by StarKey. We will provide full support once more information is available from StarKey.
 
@@ -650,35 +653,6 @@ try {
   console.error(`Wait For Transaction Error: ${error.message}`)
 }
 ```
-
-#### `createRawTransactionData_undocumented(params: any)`
-
-**Undocumented Function**
-
-Creates raw transaction data. This function is currently undocumented by StarKey. We will provide full support once more information is available from StarKey.
-
-```typescript
-async createRawTransactionData_undocumented(params: any): Promise<any>
-```
-
-**Example:**
-
-```typescript
-try {
-  const rawData = await ssc.createRawTransactionData_undocumented({
-    from: '0xYourAccount',
-    to: '0xRecipient',
-    value: '1000000'
-  })
-  console.log(`Raw Transaction Data:`, rawData)
-} catch (error) {
-  console.error(`Create Raw Transaction Data Error: ${error.message}`)
-}
-```
-
-Certainly! Below is the updated **Utilities** section for your README. This version removes the `generateNonce` and `setOptionalTransactionPayloadArgs` utilities and adds comprehensive details about the `BCS` (Binary Canonical Serialization) utilities. Additionally, it includes a note stating that the `BCS` utilities are originally from the Aptos Core library but have been abstracted to remove the dependency on the now-deprecated Aptos Core library. This section aligns with the existing style of your README and provides clear descriptions along with usage examples for each utility.
-
----
 
 ## Utilities
 
