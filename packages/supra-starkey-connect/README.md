@@ -558,10 +558,10 @@ try {
 
 ---
 
-#### `createRawTransactionDat(params: RawTxPayload)`
+#### `createRawTransactionData(params: RawTxPayload)`
 
 ```typescript
-async createRawTransactionData_undocumented(params: RawTxPayload): Promise<string>
+async createRawTransactionData(params: RawTxPayload): Promise<string>
 ```
 
 **Example:**
