@@ -416,7 +416,7 @@ const coins: bigint = BigInt(0)
 const referencePrice: bigint = BigInt(0)
 const txExpiryTime: number = Math.ceil(Date.now() / 1000) + 30 // 30 seconds from now
 
-// Construct the RawTxPayload array
+// Construct the RawTxPayload array example 1
 const rawTxPayload: RawTxPayload = [
   '0xYourSenderAddress', // senderAddr
   0, // senderSequenceNumber
@@ -430,6 +430,22 @@ const rawTxPayload: RawTxPayload = [
     BCS.bcsSerializeUint64(referencePrice) // functionArgs[2]
   ],
   { txExpiryTime } // optionalTransactionPayloadArgs ( will fallback to defaults if not set (internal step 3 ) )
+]
+
+// Construct the RawTxPayload array example 2
+const rawTxPayload: RawTxPayload = [
+  account,
+  0,
+  '0000000000000000000000000000000000000000000000000000000000000001',
+  'supra_account',
+  'transfer',
+  [],
+  [
+    new HexString(
+      '0x782608dff0ebf604f708cb4ce8b4ae43c03af7587093579267da4b20df146b40'
+    ).toUint8Array(),
+    BCS.bcsSerializeUint64(100000000)
+  ]
 ]
 
 // Sign and send the transaction
@@ -532,7 +548,6 @@ try {
 
    - The constructed `params` object is passed to the `sendTransaction` method, which dispatches the transaction to the blockchain network.
 
-   - **Code Snippet:**
      ```typescript
      const txHash = await this.sendTransaction(params)
      if (!txHash) {
@@ -659,6 +674,163 @@ try {
 } catch (error) {
   console.error(`Create Raw Transaction Data Error: ${error.message}`)
 }
+```
+
+Certainly! Below is the updated **Utilities** section for your README. This version removes the `generateNonce` and `setOptionalTransactionPayloadArgs` utilities and adds comprehensive details about the `BCS` (Binary Canonical Serialization) utilities. Additionally, it includes a note stating that the `BCS` utilities are originally from the Aptos Core library but have been abstracted to remove the dependency on the now-deprecated Aptos Core library. This section aligns with the existing style of your README and provides clear descriptions along with usage examples for each utility.
+
+---
+
+## Utilities
+
+In addition to the core functionalities, `supra-starkey-connect` offers a set of utility functions and classes that facilitate common tasks related to hexadecimal string manipulation and transaction payload validation. These utilities enhance the developer experience by providing easy-to-use tools for handling data transformations and ensuring data integrity.
+
+### `HexString`
+
+A versatile class for managing hexadecimal strings and converting between hexadecimal strings and byte arrays.
+
+**Features:**
+
+- **Initialization:** Automatically prefixes hexadecimal strings with `0x` if not already present.
+- **Conversion Methods:**
+  - `fromUint8Array(bytes: Uint8Array): HexString`  
+    Creates a `HexString` instance from a `Uint8Array`.
+  - `toUint8Array(): Uint8Array`  
+    Converts the hexadecimal string back to a `Uint8Array`.
+- **String Retrieval:**
+  - `hex(): string`  
+    Retrieves the full hexadecimal string with the `0x` prefix.
+  - `noPrefix(): string`  
+    Retrieves the hexadecimal string without the `0x` prefix.
+
+**Example Usage:**
+
+```typescript
+import { HexString } from 'supra-starkey-connect'
+
+// Creating a HexString instance
+const hex = new HexString('abcdef')
+
+// Converting to Uint8Array
+const bytes = hex.toUint8Array()
+console.log(bytes) // Uint8Array(3) [ 171, 205, 239 ]
+
+// Getting hex string with prefix
+console.log(hex.hex()) // '0xabcdef'
+
+// Getting hex string without prefix
+console.log(hex.noPrefix()) // 'abcdef'
+
+// Creating HexString from Uint8Array
+const newHex = HexString.fromUint8Array(new Uint8Array([171, 205, 239]))
+console.log(newHex.hex()) // '0xabcdef'
+```
+
+### `remove0xPrefix`
+
+A utility function that removes the `0x` prefix from a hexadecimal string if it exists. This is particularly useful for normalizing hexadecimal inputs.
+
+**Signature:**
+
+```typescript
+remove0xPrefix(value: string): string
+```
+
+**Example Usage:**
+
+```typescript
+import { remove0xPrefix } from 'supra-starkey-connect'
+
+const cleanHex = remove0xPrefix('0xabcdef') // 'abcdef'
+const sameHex = remove0xPrefix('abcdef') // 'abcdef'
+
+console.log(cleanHex) // 'abcdef'
+console.log(sameHex) // 'abcdef'
+```
+
+### `validateRawTxPayload`
+
+Validates a `RawTxPayload` against the predefined Zod schema to ensure that all required fields are correctly formatted and typed. If the validation fails, it throws a `ZodError` with detailed information about the discrepancies.
+
+**Signature:**
+
+```typescript
+validateRawTxPayload(rawTxPayload: RawTxPayload): void
+```
+
+**Example Usage:**
+
+```typescript
+import { validateRawTxPayload } from 'supra-starkey-connect'
+import { ZodError } from 'zod'
+
+const rawTxPayload = [
+  '0xSenderAddressHere',
+  1,
+  '0xModuleAddressHere',
+  'ModuleName',
+  'FunctionName',
+  [], // functionTypeArgs
+  [new Uint8Array()], // functionArgs
+  { maxGas: 500000, gasUnitPrice: 2, txExpiryTime: 1700000000 }
+]
+
+try {
+  validateRawTxPayload(rawTxPayload)
+  console.log('RawTxPayload is valid.')
+} catch (error) {
+  if (error instanceof ZodError) {
+    console.error('Validation failed:', error.errors)
+  } else {
+    console.error('An unexpected error occurred:', error)
+  }
+}
+```
+
+### `BCS` (Binary Canonical Serialization)
+
+The `BCS` utilities are originally from the **Aptos Core** library but have been **abstracted** to remove the dependency on the now-deprecated Aptos Core library. This ensures that `supra-starkey-connect` remains lightweight and free from deprecated dependencies while providing robust serialization and deserialization capabilities.
+
+`BCS` provides utilities for serializing and deserializing data structures using the Binary Canonical Serialization format. This is essential for preparing data to be sent over the blockchain and interpreting responses.
+
+**Features:**
+
+- **Serialization:** Convert various data types into a binary format suitable for blockchain transactions.
+- **Deserialization:** Parse binary data received from the blockchain into usable data structures.
+
+**Example Usage:**
+
+```typescript
+import { BCS, HexString } from 'supra-starkey-connect'
+
+// Example: Serializing a uint64 value
+const serializedU64 = BCS.bcsSerializeUint64(1311768467750121216)
+console.log(serializedU64) // Uint8Array(8) [0, 239, 205, 171, 120, 86, 52, 18]
+
+// Example: Deserializing a uint64 value
+const deserializer = new BCS.Deserializer(serializedU64)
+const deserializedU64 = deserializer.deserializeU64()
+console.log(deserializedU64) // 1311768467750121216n
+
+// Example: Serializing a string
+const serializedStr = BCS.bcsSerializeStr('Hello, Supra!')
+console.log(serializedStr) // Uint8Array([...])
+
+// Example: Deserializing a string
+const deserializerStr = new BCS.Deserializer(serializedStr)
+const deserializedStr = deserializerStr.deserializeStr()
+console.log(deserializedStr) // "Hello, Supra!"
+
+// Example: Using HexString with BCS
+const hex = new HexString('abcdef')
+const serializedHex = BCS.bcsSerializeBytes(hex.toUint8Array())
+console.log(serializedHex) // Uint8Array([...])
+
+const deserializerHex = new BCS.Deserializer(serializedHex)
+const deserializedHexBytes = deserializerHex.deserializeBytes()
+const deserializedHexString = new HexString(
+  Buffer.from(deserializedHexBytes).toString('hex')
+)
+console.log(deserializedHexString.hex()) // '0xabcdef'
 ```
 
 ## Development
