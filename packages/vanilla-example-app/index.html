@@ -8,11 +8,14 @@
   <title>Supra Starkey Connect Vanilla JS Example</title>
   <link rel="stylesheet" href="styles.css">
   
-  <script src="https://unpkg.com/supra-starkey-connect/dist/browser.iife.js"></script>
+  <!-- Include Supra Starkey Connect Library -->
+  <script src="browser.iife.js"></script>
 </head>
 <body>
   <div class="app-container">
     <h1 class="app-header">Supra Starkey Connect Vanilla JS Example</h1>
+    
+    <!-- Wallet Information Section -->
     <div class="wallet-info">
       <p><strong>Status:</strong> <span id="status">Not Connected</span></p>
       <p><strong>Account:</strong> <span id="account">None</span></p>
@@ -22,10 +25,13 @@
       <p><strong>Version:</strong> <span id="version">N/A</span></p>
       <p><strong>Chain ID:</strong> <span id="chainId">N/A</span></p>
     </div>
+
+    <!-- Action Buttons Section -->
     <div class="button-group">
       <button id="connectButton" class="btn">Connect Wallet</button>
       <button id="disconnectButton" class="btn" disabled>Disconnect Wallet</button>
       <button id="sendTransactionButton" class="btn" disabled>Send Test Transaction</button>
+      
       <label for="chainSelect" class="chain-label">Change Network:</label>
       <select id="chainSelect" class="chain-select" disabled>
         <option value="1">Chain 1</option>
@@ -35,25 +41,44 @@
         <option value="5">Chain 5</option>
         <option value="6">Chain 6</option>
       </select>
+      
       <button id="promptInstallButton" class="btn">Prompt Install</button>
       <button id="promptCreatorButton" class="btn">Visit GitHub</button>
     </div>
+
+    <!-- Content Wrapper for Additional Features -->
     <div class="content-wrapper">
+      
+      <!-- Message Signing Section -->
       <div>
         <h2 class="logs-header">Message Signing</h2>
         <div class="wallet-info">
           <textarea id="signMessageInput" placeholder="Enter message to sign"></textarea>
           <button id="signMessageButton" class="btn" disabled>Sign Message</button>
-          <div id="signatureResponse"></div>
+          <div id="signatureResponse" class="response-container"></div>
         </div>
       </div>
+      
+      <!-- Sign and Send Transaction Section -->
+      <div>
+        <h2 class="logs-header">Sign and Send Transaction</h2>
+        <div class="wallet-info">
+          <button id="signAndSendTransactionButton" class="btn" disabled>Sign and Send Transaction</button>
+          <div id="rawTxHash" class="response-container"></div>
+          <div id="rawTxError" class="error-container"></div>
+        </div>
+      </div>
+      
+      <!-- Interaction Logs Section -->
       <div>
         <h2 class="logs-header">Interaction Logs</h2>
         <div class="log-container" id="logContainer"></div>
       </div>
+      
     </div>
   </div>
 
+  <!-- Main JavaScript File -->
   <script src="main.js"></script>
 </body>
 </html>

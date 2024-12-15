@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const signMessageInput = document.getElementById('signMessageInput');
   const signMessageButton = document.getElementById('signMessageButton');
   const signatureResponseEl = document.getElementById('signatureResponse');
+  const signAndSendTransactionButton = document.getElementById('signAndSendTransactionButton');
+  const rawTxHashEl = document.getElementById('rawTxHash');
+  const rawTxErrorEl = document.getElementById('rawTxError');
 
   const connectButton = document.getElementById('connectButton');
   const disconnectButton = document.getElementById('disconnectButton');
@@ -166,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
       disconnectButton.disabled = false;
       sendTransactionButton.disabled = false;
       signMessageButton.disabled = false;
+      signAndSendTransactionButton.disabled = false;
       chainSelect.disabled = false;
       fetchAllAccounts();
       fetchBalance();
@@ -199,7 +203,12 @@ document.addEventListener('DOMContentLoaded', () => {
       disconnectButton.disabled = true;
       sendTransactionButton.disabled = true;
       signMessageButton.disabled = true;
+      signAndSendTransactionButton.disabled = true;
       chainSelect.disabled = true;
+      // Clear additional UI elements
+      signatureResponseEl.innerHTML = '';
+      rawTxHashEl.innerHTML = '';
+      rawTxErrorEl.innerHTML = '';
     } catch (err) {
       updateWalletInfo({ status: `Disconnection failed: ${err.message}` });
       addLog(`Disconnection Failed: ${err.message}`);
@@ -242,24 +251,92 @@ document.addEventListener('DOMContentLoaded', () => {
   /**
    * Signs a message.
    */
-  const signMessage = async () => {
+  const handleSignMessage = async () => {
     const message = signMessageInput.value.trim();
     if (!message) {
-      addLog('Message cannot be empty.');
+      addLog('No sign message set, please set a message to sign first.');
+      return;
+    }
+    if (!window.ssc) {
+      addLog('Supra Starkey Connect is not available.');
       return;
     }
     try {
+      signMessageButton.disabled = true;
+      signMessageButton.textContent = 'Signing...';
       addLog('Attempting to sign message...');
       const result = await window.ssc.signMessage({ message });
-      signatureResponseEl.innerHTML = `
-        <p>Signature Response:</p>
-        <pre>${JSON.stringify(result, null, 2)}</pre>
-      `;
-      updateWalletInfo({ status: 'Message signed successfully.' });
-      addLog('Message signed successfully.');
+      if (result) {
+        const { response, verified } = result;
+        signatureResponseEl.innerHTML = `
+          <p>Signature Response:</p>
+          <pre>${JSON.stringify({ ...response, verified }, null, 2)}</pre>
+        `;
+        updateWalletInfo({ status: 'Message signed and verified.' });
+        addLog(`Message signed - Signature: ${response.signature}, Verified: ${verified}`);
+      }
     } catch (err) {
       updateWalletInfo({ status: `Sign message failed: ${err.message}` });
-      addLog(`Error signing message: ${err.message}`);
+      addLog(`Sign message failed: ${err.message}`);
+    } finally {
+      signMessageButton.disabled = false;
+      signMessageButton.textContent = 'Sign Message';
+    }
+  };
+
+  /**
+   * Sends and signs a raw transaction.
+   */
+  const handleSignAndSendTransaction = async () => {
+    const account = accountEl.textContent !== 'None' ? accountEl.textContent : null;
+    if (!account) {
+      updateWalletInfo({ status: 'No connected account. Connect wallet first.' });
+      addLog('Sign and Send Transaction failed. No connected account.');
+      return;
+    }
+
+    try {
+      signAndSendTransactionButton.disabled = true;
+      signAndSendTransactionButton.textContent = 'Sending...';
+      rawTxHashEl.innerHTML = '';
+      rawTxErrorEl.innerHTML = '';
+      addLog('~~ sendRawTransaction ~~~');
+
+      // Example Data:
+      // Adjust the rawTxPayload as per your specific requirements
+      const rawTxPayload = [
+        account,
+        0,
+        '0000000000000000000000000000000000000000000000000000000000000001',
+        'supra_account',
+        'transfer',
+        [],
+        [
+          new window.HexString('0x782608dff0ebf604f708cb4ce8b4ae43c03af7587093579267da4b20df146b40').toUint8Array(),
+          window.BCS.bcsSerializeUint64(100000000)
+        ]
+      ];
+
+      addLog(`Transaction being sent: ${JSON.stringify(rawTxPayload, null, 2)}`);
+      addLog('Transaction created');
+
+      // Sign and Send
+      const txHash = await window.ssc.signAndSendTransaction(rawTxPayload);
+
+      if (txHash) {
+        rawTxHashEl.innerHTML = `<p>Transaction Hash:</p><pre>${txHash}</pre>`;
+        updateWalletInfo({ status: `Transaction sent! Hash: ${txHash}` });
+        addLog(`Transaction sent successfully. Hash: ${txHash}`);
+      } else {
+        addLog('Failed to send transaction.');
+      }
+    } catch (err) {
+      rawTxErrorEl.innerHTML = `<p>Error:</p><pre>${err.message}</pre>`;
+      updateWalletInfo({ status: `Transaction failed: ${err.message}` });
+      addLog(`signAndSendTransaction Failed: ${err.message}`);
+    } finally {
+      signAndSendTransactionButton.disabled = false;
+      signAndSendTransactionButton.textContent = 'Sign and Send Transaction';
     }
   };
 
@@ -273,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await window.ssc.changeNetwork(chain);
       updateWalletInfo({ chainId: res.chainId });
       addLog(`Network changed successfully. New Chain ID: ${res.chainId}`);
-      fetchCurrentNetwork(); // Fetch updated network info
+      fetchCurrentNetwork();
     } catch (err) {
       updateWalletInfo({ status: `Change network failed: ${err.message}` });
       addLog(`Change Network (ChainId) Failed: ${err.message} only chain 6 seems to work`);
@@ -320,7 +397,12 @@ document.addEventListener('DOMContentLoaded', () => {
         disconnectButton.disabled = true;
         sendTransactionButton.disabled = true;
         signMessageButton.disabled = true;
+        signAndSendTransactionButton.disabled = true;
         chainSelect.disabled = true;
+        // Clear additional UI elements
+        signatureResponseEl.innerHTML = '';
+        rawTxHashEl.innerHTML = '';
+        rawTxErrorEl.innerHTML = '';
       }
     };
 
@@ -340,7 +422,12 @@ document.addEventListener('DOMContentLoaded', () => {
       disconnectButton.disabled = true;
       sendTransactionButton.disabled = true;
       signMessageButton.disabled = true;
+      signAndSendTransactionButton.disabled = true;
       chainSelect.disabled = true;
+      // Clear additional UI elements
+      signatureResponseEl.innerHTML = '';
+      rawTxHashEl.innerHTML = '';
+      rawTxErrorEl.innerHTML = '';
     };
 
     // Network Changed Listener
@@ -384,22 +471,13 @@ document.addEventListener('DOMContentLoaded', () => {
         disconnectButton.disabled = false;
         sendTransactionButton.disabled = false;
         signMessageButton.disabled = false;
+        signAndSendTransactionButton.disabled = false;
         chainSelect.disabled = false;
         fetchAllAccounts();
         fetchBalance();
         fetchVersion();
         fetchChainId();
         fetchCurrentNetwork();
-        // Set selected chain if available
-        try {
-          const cid = await window.ssc.getChainId();
-          if (cid?.chainId) {
-            chainSelect.value = cid.chainId;
-            setSelectedChain(chainId);
-          }
-        } catch (err) {
-          addLog(`Error fetching initial chain ID: ${err.message}`);
-        }
       }
     }
   };
@@ -414,11 +492,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   init();
 
-
-  signMessageButton.addEventListener('click', signMessage);
+  // Event Listeners for Buttons and Select
   connectButton.addEventListener('click', connectWallet);
   disconnectButton.addEventListener('click', disconnectWallet);
   sendTransactionButton.addEventListener('click', sendTransaction);
+  signMessageButton.addEventListener('click', handleSignMessage);
+  signAndSendTransactionButton.addEventListener('click', handleSignAndSendTransaction);
   chainSelect.addEventListener('change', (e) => {
     const selectedChain = e.target.value;
     changeNet(selectedChain);

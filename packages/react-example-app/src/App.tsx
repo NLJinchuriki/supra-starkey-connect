@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { ssc, BCS } from 'supra-starkey-connect'
+import { ssc, BCS, HexString } from 'supra-starkey-connect'
 import type { Balance, RawTxPayload } from 'supra-starkey-connect'
 
 import './App.css'
@@ -187,23 +187,38 @@ function App() {
       addLog('~~ sendRawTransaction ~~~')
 
       // Example Data:
-      const slot_id: bigint = BigInt(4)
-      const coins: bigint = BigInt(0)
-      const reference_price: bigint = BigInt(0)
+      // const slot_id: bigint = BigInt(4)
+      // const coins: bigint = BigInt(0)
+      // const reference_price: bigint = BigInt(0)
 
       const rawTxPayload: RawTxPayload = [
         account,
         0,
-        '0x8943a2c0dc9b08597cbde5d806bf86c69beb7007a4ac401a7f5b520f994e145c',
-        'slot_prediction',
-        'create_prediction',
+        '0000000000000000000000000000000000000000000000000000000000000001',
+        'supra_account',
+        'transfer',
         [],
         [
-          BCS.bcsSerializeU256(slot_id),
-          BCS.bcsSerializeUint64(coins),
-          BCS.bcsSerializeUint64(reference_price)
+          new HexString(
+            '0x782608dff0ebf604f708cb4ce8b4ae43c03af7587093579267da4b20df146b40'
+          ).toUint8Array(),
+          BCS.bcsSerializeUint64(100000000)
         ]
       ]
+
+      // const rawTxPayload: RawTxPayload = [
+      //   account,
+      //   0,
+      //   '0x8943a2c0dc9b08597cbde5d806bf86c69beb7007a4ac401a7f5b520f994e145c',
+      //   'slot_prediction',
+      //   'create_prediction',
+      //   [],
+      //   [
+      //     BCS.bcsSerializeU256(slot_id),
+      //     BCS.bcsSerializeUint64(coins),
+      //     BCS.bcsSerializeUint64(reference_price)
+      //   ]
+      // ]
 
       addLog(
         `Transaction beeing send: ${JSON.stringify(rawTxPayload, null, 2)}`

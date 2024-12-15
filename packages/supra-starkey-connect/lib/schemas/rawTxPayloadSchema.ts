@@ -4,6 +4,22 @@ import { TypeTagSchema } from '../schemas/builderTypesSchema'
 import { OptionalTransactionPayloadArgsSchema } from '../schemas/optionalTransactionPayloadArgsSchema' // Assuming you have this
 
 /**
+ * Zod schema for validating hexadecimal strings.
+ *
+ * - Allows strings to optionally start with '0x'.
+ * - Ensures that the hexadecimal part is non-empty and contains only valid hexadecimal characters.
+ */
+const HexStringSchema = z
+  .string()
+  .min(1, 'Hex string cannot be empty') // Ensures the string is not empty
+  .refine((val) => {
+    // Remove '0x' prefix if present
+    const hexWithoutPrefix = val.startsWith('0x') ? val.slice(2) : val
+    // Check that the remaining string has at least one character and contains only hex digits
+    return /^[0-9a-fA-F]+$/.test(hexWithoutPrefix)
+  }, 'Invalid hexadecimal string')
+
+/**
  * Zod schema for validating RawTxPayloadArray.
  *
  * Ensures that each element in the RawTxPayloadArray adheres to the required type and format.
@@ -23,7 +39,7 @@ import { OptionalTransactionPayloadArgsSchema } from '../schemas/optionalTransac
 export const RawTxPayloadSchema: z.ZodType<RawTxPayload> = z.tuple([
   z.string().regex(/^0x[0-9a-fA-F]+$/, 'Invalid senderAddr'), // senderAddr
   z.number(), // senderSequenceNumber
-  z.string().regex(/^0x[0-9a-fA-F]+$/, 'Invalid moduleAddr'), // moduleAddr
+  HexStringSchema, // moduleAddr
   z.string().min(1, 'moduleName cannot be empty'), // moduleName
   z.string().min(1, 'functionName cannot be empty'), // functionName
   z.array(TypeTagSchema), // functionTypeArgs
