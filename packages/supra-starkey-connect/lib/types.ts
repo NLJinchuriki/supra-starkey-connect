@@ -97,8 +97,8 @@ export interface StarkeyProvider {
   waitForTransactionWithResult(txHash: string): Promise<any>
 
   /**
-   * Undocumented method. Parameters can be any object.
-   * @param params - the parameterse for creating Raw Transaction data
+   * Creates a raw transaction.
+   * @param {RawTxPayload} RawTxPayload - The raw tx params object.
    */
   createRawTransactionData(params: RawTxPayload): Promise<string>
 
