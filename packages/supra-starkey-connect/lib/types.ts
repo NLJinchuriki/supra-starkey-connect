@@ -1,11 +1,22 @@
-import { TypeTag } from './builderTypes/builderTypes'
+import { TypeTag } from './helpers/builderTypes/builderTypes'
 
+/**
+ * Represents the Optional transaction options.
+ */
 export interface OptionalTransactionPayloadArgs {
   maxGas?: number
   gasUnitPrice?: number
   txExpiryTime?: number
 }
 
+/**
+ * Represents the transaction status.
+ */
+export enum TransactionStatus {
+  Success = 'Success',
+  Failed = 'Failed',
+  Pending = 'Pending'
+}
 /**
  * Parameters for sending a transaction.
  */
@@ -33,6 +44,13 @@ export interface Balance {
 export interface SignMessageParams {
   message: string
   nonce?: string
+}
+
+/**
+ * Represents transaction hash.
+ */
+export interface TransactionHash {
+  txHash: string
 }
 
 /**
@@ -91,14 +109,14 @@ export interface StarkeyProvider {
   ): Promise<string>
 
   /**
-   * Undocumented method. Parameters can be any object.
-   * @param params - Undocumented parameters. Refer to documentation or contact starKey support for details.
+   * Wait for a transaction by its txhash
+   * @param txHash - Transaction hash.
    */
   waitForTransactionWithResult(txHash: string): Promise<any>
 
   /**
-   * Creates a raw transaction.
-   * @param {RawTxPayload} RawTxPayload - The raw tx params object.
+   * Creates raw transaction data.
+   * @param params - the parameterse for creating Raw Transaction data
    */
   createRawTransactionData(params: RawTxPayload): Promise<string>
 
@@ -169,7 +187,7 @@ export interface StarkeyObject {
   getVersion(): Promise<string>
 }
 
-import * as BuilderTypes from './builderTypes/builderTypes'
+import * as BuilderTypes from './helpers/builderTypes/builderTypes'
 
 /**
  * BCS (Binary Canonical Serialization) utilities.

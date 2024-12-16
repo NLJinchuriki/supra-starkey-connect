@@ -1,5 +1,5 @@
-import { RawTxPayload } from './types'
-import { RawTxPayloadSchema } from './schemas/rawTxPayloadSchema'
+import { RawTxPayload } from '../types'
+import { RawTxPayloadSchema } from '../schemas/rawTxPayloadSchema'
 
 /**
  * Validates a RawTxPayloadArray against the predefined RawTxPayloadArraySchema.

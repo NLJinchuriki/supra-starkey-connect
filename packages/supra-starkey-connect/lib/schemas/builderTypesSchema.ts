@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { TypeTag, StructTag } from '../builderTypes/builderTypes'
+import { TypeTag, StructTag } from '../helpers/builderTypes/builderTypes'
 
 const StructTagSchema: z.ZodType<StructTag> = z.object({
   address: z.string().regex(/^0x[0-9a-fA-F]+$/, 'Invalid address'),

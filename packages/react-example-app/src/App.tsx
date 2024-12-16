@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { ssc, BCS, HexString } from 'supra-starkey-connect'
+import {
+  ssc,
+  BCS,
+  HexString,
+  waitForTransactionCompletion
+} from 'supra-starkey-connect'
 import type { Balance, RawTxPayload } from 'supra-starkey-connect'
 
 import './App.css'
@@ -228,11 +233,19 @@ function App() {
 
       // Sign and Send
       const txHash = await ssc.signAndSendTransaction(rawTxPayload)
-
       if (txHash) {
         setRawTxHash(txHash)
         setStatus(`Transaction sent! Hash: ${txHash}`)
-        return addLog(`Transaction sent successfully. Hash: ${txHash}`)
+        addLog(`Transaction sent successfully. Hash: ${txHash}`)
+
+        addLog(
+          `Using ssc-util: ['waitForTransactionCompletion'] to check status of transfer with hash ${txHash}`
+        )
+        const txResult = await waitForTransactionCompletion(txHash)
+
+        return addLog(
+          `Transaction with hash: ${txHash} has completed with status: ${txResult}`
+        )
       }
       addLog('Failed')
     } catch (err: any) {

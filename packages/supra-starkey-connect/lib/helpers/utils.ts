@@ -5,10 +5,33 @@ import {
   DEFAULT_GAS_PRICE,
   DEFAULT_MAX_GAS_UNITS,
   DEFAULT_TX_EXPIRATION_DURATION,
-  MILLISECONDS_PER_SECOND
-} from './constants'
-import { OptionalTransactionPayloadArgs, RawTxPayload } from './types'
+  MILLISECONDS_PER_SECOND,
+  MAX_RETRY_FOR_TRANSACTION_COMPLETION,
+  DELAY_BETWEEN_POOLING_REQUEST
+} from '../constants'
+import {
+  OptionalTransactionPayloadArgs,
+  RawTxPayload,
+  TransactionStatus
+} from '../types'
 
+import { sendRequest } from '../network/request'
+
+/**
+ * Pauses execution for a specified number of milliseconds.
+ *
+ * @function
+ * @param {number} timeMs - The duration to sleep in milliseconds.
+ * @returns {Promise<null>} - A promise that resolves after the specified duration.
+ *
+ * @example
+ * await sleep(2000); // Pauses execution for 2 seconds
+ */
+export const sleep = (timeMs: number): Promise<null> => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, timeMs)
+  })
+}
 /**
  * Removes the `0x` prefix from a hexadecimal string if it exists.
  *
@@ -84,4 +107,68 @@ export const setOptionalTransactionPayloadArgs = (
     functionArgs,
     updatedOptionalArgs
   ]
+}
+
+/**
+ * Retrieves the status of a given Supra transaction.
+ *
+ * @param transactionHash - Hex-encoded 32-byte transaction hash.
+ * @returns A promise that resolves to the transaction status or null if not found.
+ */
+export const getTransactionStatus = async (
+  transactionHash: string,
+  network: string = 'testnet'
+): Promise<TransactionStatus | null> => {
+  const subURL = `/rpc/v1/transactions/${transactionHash}`
+
+  try {
+    const resData = await sendRequest(true, subURL, network)
+
+    if (resData.data == null) {
+      return null
+    }
+
+    switch (resData.data.status) {
+      case 'Unexecuted':
+        return TransactionStatus.Pending
+      case 'Fail':
+        return TransactionStatus.Failed
+      case 'Success':
+        return TransactionStatus.Success
+      default:
+        // Handle unexpected status values
+        throw new Error(`Unknown transaction status: ${resData.data.status}`)
+    }
+  } catch (error) {
+    console.error(`Error fetching transaction status: ${error}`)
+    throw error
+  }
+}
+
+/**
+ * Waits for a transaction to complete by polling its status.
+ *
+ * @param txHash - The transaction hash to monitor.
+ * @returns A promise that resolves to the final transaction status.
+ */
+export const waitForTransactionCompletion = async (
+  txHash: string,
+  network: string = 'testnet'
+): Promise<TransactionStatus> => {
+  for (let i = 0; i < MAX_RETRY_FOR_TRANSACTION_COMPLETION; i++) {
+    try {
+      const txStatus = await getTransactionStatus(txHash, network)
+
+      if (txStatus === null || txStatus === TransactionStatus.Pending) {
+        await sleep(DELAY_BETWEEN_POOLING_REQUEST)
+      } else {
+        return txStatus
+      }
+    } catch (error) {
+      console.error(`Error during transaction polling: ${error}`)
+      throw error
+    }
+  }
+
+  return TransactionStatus.Pending
 }

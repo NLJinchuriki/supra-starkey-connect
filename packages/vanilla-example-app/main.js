@@ -312,8 +312,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'transfer',
         [],
         [
-          new window.HexString('0x782608dff0ebf604f708cb4ce8b4ae43c03af7587093579267da4b20df146b40').toUint8Array(),
-          window.BCS.bcsSerializeUint64(100000000)
+          new window.sscUtils.HexString('0x782608dff0ebf604f708cb4ce8b4ae43c03af7587093579267da4b20df146b40').toUint8Array(),
+          window.sscUtils.BCS.bcsSerializeUint64(100000000)
         ]
       ];
 
@@ -327,6 +327,15 @@ document.addEventListener('DOMContentLoaded', () => {
         rawTxHashEl.innerHTML = `<p>Transaction Hash:</p><pre>${txHash}</pre>`;
         updateWalletInfo({ status: `Transaction sent! Hash: ${txHash}` });
         addLog(`Transaction sent successfully. Hash: ${txHash}`);
+
+        addLog(
+          `Using ssc-util: ['waitForTransactionCompletion'] to check status of transfer with hash ${txHash}`
+        )
+        const txResult = await window.sscUtils.waitForTransactionCompletion(txHash)
+
+        return addLog(
+          `Transaction with hash: ${txHash} has completed with status: ${txResult}`
+        )
       } else {
         addLog('Failed to send transaction.');
       }

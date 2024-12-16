@@ -449,7 +449,7 @@ try {
 }
 ```
 
-**How It Works on the inside:**
+**How It Works on internally:**
 
 1. **Parameter Preparation:**
 
@@ -633,21 +633,19 @@ The `supra-starkey-connect` library currently exposes several methods that are *
 
 **Note:** Use these methods with caution, as their behavior may change without notice. We recommend monitoring StarKey's official channels for updates and additional documentation regarding these functions.
 
-#### `waitForTransactionWithResult_undocumented(params: any)`
+#### `waitForTransactionWithResult(txHash: string)`
 
 Waits for a transaction with result. This function is currently undocumented by StarKey. We will provide full support once more information is available from StarKey.
 
 ```typescript
-async waitForTransactionWithResult_undocumented(params: any): Promise<any>
+async waitForTransactionWithResult(txHash: string): Promise<any>
 ```
 
 **Example:**
 
 ```typescript
 try {
-  const result = await ssc.waitForTransactionWithResult_undocumented({
-    txHash: '0xTransactionHash'
-  })
+  const result = await ssc.waitForTransactionWithResult('0xTransactionHash')
   console.log(`Transaction Result:`, result)
 } catch (error) {
   console.error(`Wait For Transaction Error: ${error.message}`)
@@ -657,6 +655,12 @@ try {
 ## Utilities
 
 In addition to the core functionalities, `supra-starkey-connect` offers a set of utility functions and classes that facilitate common tasks related to hexadecimal string manipulation and transaction payload validation. These utilities enhance the developer experience by providing easy-to-use tools for handling data transformations and ensuring data integrity.
+
+For browser implementations the utils are available at:
+
+```typescript
+windows.sscUtils
+```
 
 ### `HexString`
 
@@ -805,6 +809,73 @@ const deserializedHexString = new HexString(
   Buffer.from(deserializedHexBytes).toString('hex')
 )
 console.log(deserializedHexString.hex()) // '0xabcdef'
+```
+
+---
+
+### `waitForTransactionCompletion`
+
+Waits for a transaction to complete by polling its status at regular intervals. This utility is useful for scenarios where you need to ensure that a transaction has been finalized before proceeding with subsequent operations.
+
+**Signature:**
+
+```typescript
+waitForTransactionCompletion(
+  txHash: string,
+  network?: string
+): Promise<TransactionStatus>
+```
+
+**Parameters:**
+
+- `txHash` (string): The transaction hash to monitor.
+- `network` (string, optional): The network to query (e.g., `'testnet'`, `'mainnet'`). Defaults to `'testnet'`.
+
+**Returns:**
+
+- `Promise<TransactionStatus>`: Resolves to the final transaction status.
+
+**Example Usage:**
+
+```typescript
+import {
+  waitForTransactionCompletion,
+  TransactionStatus
+} from 'supra-starkey-connect'
+
+const txHash = '0xYourTransactionHashHere'
+
+waitForTransactionCompletion(txHash, 'mainnet')
+  .then((status) => {
+    if (status === TransactionStatus.Success) {
+      console.log('Transaction completed successfully!')
+    } else if (status === TransactionStatus.Failed) {
+      console.log('Transaction failed.')
+    } else {
+      console.log('Transaction is still pending after maximum retries.')
+    }
+  })
+  .catch((error) => {
+    console.error('Error while waiting for transaction completion:', error)
+  })
+```
+
+---
+
+### `Sleep`
+
+Delay executing for the specified time.
+
+```typescript
+/**
+ * Delays execution for a specified number of milliseconds.
+ *
+ * @param ms - The number of milliseconds to sleep.
+ * @returns A promise that resolves after the specified delay.
+ */
+export const sleep = (ms: number): Promise<void> => {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
 ```
 
 ## Development

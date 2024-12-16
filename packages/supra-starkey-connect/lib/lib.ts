@@ -4,7 +4,7 @@ import {
   remove0xPrefix,
   generateNonce,
   setOptionalTransactionPayloadArgs
-} from './utils'
+} from './helpers/utils'
 
 import {
   StarkeyProvider,
@@ -15,7 +15,7 @@ import {
   SignMessageResponse,
   RawTxPayload
 } from './types'
-import { validateRawTxPayload } from './validators'
+import { validateRawTxPayload } from './helpers/validators'
 
 /**
  * A class that provides a wrapper around the StarKey Supra wallet provider.
@@ -366,18 +366,18 @@ export class SupraStarkeyConnect {
   }
 
   /**
-   * Undocumented function. Needs more input from the StarKey team.
+   * Wait for a transaction by its txhash
    *
-   * @param {any} params - Undocumented parameters. Refer to documentation or contact support for details.
+   * @param {string} - Transaction Hash.
    * @returns {Promise<any>} The transaction result.
    * @throws Will throw an error if the provider is not initialized.
    */
-  async waitForTransactionWithResult_undocumented(params: any): Promise<any> {
+  async waitForTransactionWithResult(txHash: string): Promise<any> {
     console.warn(
       'waitForTransactionWithResult is undocumented. Please refer to the starkey documentation or contact starkey support for more details.'
     )
     if (!this.provider) throw new Error('Provider not initialized')
-    return await this.provider.waitForTransactionWithResult(params)
+    return await this.provider.waitForTransactionWithResult(txHash)
   }
 
   /**
