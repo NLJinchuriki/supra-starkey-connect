@@ -1,4 +1,4 @@
-# Supra Starkey Connect (Unofficial)
+# Supra Starkey Connect
 
 Welcome to the **Supra Starkey Connect**! This monorepo is designed to provide a comprehensive solution for integrating the Supra Starkey wallet provider into your web applications. It includes the core `supra-starkey-connect` library, along with example applications demonstrating its usage in both React and Vanilla JavaScript environments.
 

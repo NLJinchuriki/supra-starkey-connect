@@ -1,7 +1,7 @@
 {
   "name": "supra-starkey-connect",
   "version": "1.0.11",
-  "description": "A unofficial typed, lightweight wrapper around the StarKey Supra wallet provider for the Supra Blockchain",
+  "description": "A typed, lightweight wrapper around the StarKey Supra wallet provider for the Supra Blockchain",
   "repository": {
     "type": "git",
     "url": "https://github.com/NLJinchuriki/supra-starkey-connect.git"

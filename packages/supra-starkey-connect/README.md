@@ -1,4 +1,4 @@
-# Supra Starkey Connect (Unofficial)
+# Supra Starkey Connect
 
 **supra-starkey-connect** is a TypeScript-based library that provides a robust and type-safe wrapper around the StarKey Supra wallet provider. It simplifies the integration of Supra Blockchain wallet functionalities into your web applications, enabling seamless interactions such as connecting wallets, sending transactions, signing messages, and handling network changes.
 
