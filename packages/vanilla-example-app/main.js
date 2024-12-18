@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Grab all necessary DOM elements
   const statusEl = document.getElementById('status');
   const accountEl = document.getElementById('account');
   const allAccountsEl = document.getElementById('allAccounts');
@@ -35,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
     logEntry.className = 'log-entry';
     logEntry.textContent = message;
     logContainer.appendChild(logEntry);
-    // Automatically scroll to the bottom
     logContainer.scrollTop = logContainer.scrollHeight;
   };
 
@@ -165,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         status: `Connected: ${acc}`,
         account: acc,
       });
-      // Enable buttons after connection
+
       disconnectButton.disabled = false;
       sendTransactionButton.disabled = false;
       signMessageButton.disabled = false;
@@ -175,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
       fetchBalance();
       fetchVersion();
       fetchChainId();
-      fetchCurrentNetwork(); // Ensures network info is fetched
+      fetchCurrentNetwork();
     } catch (err) {
       updateWalletInfo({ status: `Connection failed: ${err.message}` });
       addLog(`Connection Failed: ${err.message}`);
@@ -205,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
       signMessageButton.disabled = true;
       signAndSendTransactionButton.disabled = true;
       chainSelect.disabled = true;
-      // Clear additional UI elements
+
       signatureResponseEl.innerHTML = '';
       rawTxHashEl.innerHTML = '';
       rawTxErrorEl.innerHTML = '';

@@ -17,6 +17,7 @@ export enum TransactionStatus {
   Failed = 'Failed',
   Pending = 'Pending'
 }
+
 /**
  * Parameters for sending a transaction.
  */

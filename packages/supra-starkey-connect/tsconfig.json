@@ -1,21 +1,21 @@
 {
-    "compilerOptions": {
-      "target": "ESNext",
-      "module": "ESNext",
-      "lib": ["DOM", "ESNext"],
-      "strict": true,
-      "moduleResolution": "node",
-      "esModuleInterop": true,
-      "allowSyntheticDefaultImports": true,
-      "resolveJsonModule": true,
-      "isolatedModules": false,
-      "declaration": true,
-      "declarationDir": "dist",
-      "noEmit": true,
-      "forceConsistentCasingInFileNames": true,
-      "skipLibCheck": true,
-      "experimentalDecorators": true,
-      "emitDecoratorMetadata": true,
-    },
-    "include": ["lib", "__tests__"]
-  }
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["DOM", "ESNext"],
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": false,
+    "declaration": true,
+    "declarationDir": "dist",
+    "noEmit": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "include": ["lib", "__tests__", "global.d.ts"]
+}

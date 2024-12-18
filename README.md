@@ -8,6 +8,7 @@ Welcome to the **Supra Starkey Connect**! This monorepo is designed to provide a
 - [Packages](#packages)
   - [supra-starkey-connect](#supra-starkey-connect)
   - [react-example-app](#react-example-app)
+  - [react-nextjs-example-app](#react-nextjs-example-app)
   - [vanilla-example-app](#vanilla-example-app)
 - [Getting Started](#getting-started)
   - [Installation](#installation)
@@ -31,6 +32,10 @@ The core library providing a type-safe and feature-rich interface to interact wi
 ### react-example-app
 
 A React-based application demonstrating how to integrate and use the `supra-starkey-connect` library within a React environment.
+
+### react-nextjs-example-app
+
+A React-based NextJS application demonstrating how to integrate and use the `supra-starkey-connect` library within a React environment.
 
 ### vanilla-example-app
 
@@ -76,7 +81,11 @@ The monorepo includes scripts to run both example applications from the root dir
 2. **Access the Applications**
 
    - **React Example App**: Open [http://localhost:5173](http://localhost:5173) in your browser.
+   - **React NextJS Example App**: Open [http://localhost:3000](http://localhost:3000) in your browser.
    - **Vanilla Example App**: Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+   - **React Example App Live Demo**: [Live Demo on vercel](https://supra-starkey-connect-vanilla.react.app)
+   - **React Next JS Example App Live Demo**: [Live Demo on vercel](https://supra-starkey-connect-react-nextjs.vercel.app)
    - **Vanilla Example App Live Demo**: [Live Demo on vercel](https://supra-starkey-connect-vanilla.vercel.app)
 
 ## Scripts

@@ -2,5 +2,6 @@
 
 packages:
   - 'packages/supra-starkey-connect'
+  - 'packages/react-example-nextjs-app'
   - 'packages/react-example-app'
   - 'packages/vanilla-example-app'

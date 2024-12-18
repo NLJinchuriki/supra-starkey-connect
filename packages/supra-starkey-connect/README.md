@@ -1,49 +1,101 @@
-# Supra Starkey Connect (Unofficial)
+# Supra Starkey Connect 1.0.9 (Unofficial)
 
 **supra-starkey-connect** is a TypeScript-based library that provides a robust and type-safe wrapper around the StarKey Supra wallet provider. It simplifies the integration of Supra Blockchain wallet functionalities into your web applications, enabling seamless interactions such as connecting wallets, sending transactions, signing messages, and handling network changes.
 
+**Version 1.0.9** introduces improvements that resolve specific Server-Side Rendering (SSR) issues and adopts the `getSupraStarkeyConnect` method for enhanced functionality.
+
 For an overview of the entire monorepo and example applications, please refer to the [MONOREPO README](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/README.md).
+
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [API](#api)
+  - [Interfaces](#interfaces)
+  - [Methods](#methods)
+- [Undocumented Methods](#undocumented-methods)
+- [Utilities](#utilities)
+  - [Utility Functions](#utility-functions)
+  - [BuilderTypes](#buildertypes)
+  - [Types](#types)
+- [Development](#development)
+- [Example Applications](#example-applications)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
 - **Type Safety**: Leveraging TypeScript to ensure type-safe interactions with the StarKey Supra provider.
 - **Event Handling**: Simplified event listeners for account changes, disconnections, and network changes.
-- **Multiple Build Formats**: Supports ESM, CJS, and (BROWSER) builds to cater to different environments.
+- **Multiple Build Formats**: Supports ESM, CJS, and Browser (IIFE) builds to cater to different environments.
 - **Comprehensive Methods**: Includes methods for connecting, disconnecting, sending transactions, signing messages, and more.
-- **Undocumented Methods Support**: Exposes additional methods that are currently undocumented by StarKey, with the intention to support them fully once more information is available.
+- **SSR Enhancements**: Version 1.0.9 addresses specific SSR issues, ensuring better compatibility with server-rendered applications.
+- **Utility Functions**: Provides utilities like `HexString`, `remove0xPrefix`, and `sleep` for common tasks.
+- **BuilderTypes**: Exports `BuilderTypes` for constructing transaction payloads and other blockchain-related data structures.
+- **Undocumented Methods Support**: Exposes additional methods currently undocumented by StarKey, with plans for full support as documentation becomes available.
 
-**Vanilla JS supra-starkey-connect features demo**: [Live Demo on vercel](https://supra-starkey-connect-vanilla.vercel.app)
+**REACTJS supra-starkey-connect Features Demo**: [React Live Demo on Vercel](https://supra-starkey-connect-react.vercel.app)
+**REACT NEXTJS supra-starkey-connect Features Demo**: [React NextJS Live Demo on Vercel](https://supra-starkey-connect-reactnextjs.vercel.app)
+**Vanilla JS supra-starkey-connect Features Demo**: [Vanilla JS Live Demo on Vercel](https://supra-starkey-connect-vanilla.vercel.app)
 
 ## Installation
 
-To install supra-starkey-connect within your project:
+### NPM
 
 ```bash
 npm install supra-starkey-connect
-# or
+```
+
+````
+
+### PNPM
+
+```bash
 pnpm add supra-starkey-connect
 ```
 
-**For Browser (Vanilla JavaScript)**
+### For Browser (Vanilla JavaScript)
 
-(You can use the browser-friendly build provided by the library via a CDN)
+You can use the browser-friendly build provided by the library via a CDN:
 
-```typescript
+```html
 <script src="https://unpkg.com/supra-starkey-connect/dist/browser.iife.js"></script>
 ```
 
 ## Usage
 
-Import the library into your project:
+### Importing the Library
 
 ```typescript
-import { ssc } from 'supra-starkey-connect'
+import { getSupraStarkeyConnect } from 'supra-starkey-connect'
+
+// Initialize the connection
+const ssc = getSupraStarkeyConnect()
 
 // Connect to the wallet
 const account = await ssc.connect()
+console.log(`Connected Account: ${account}`)
 ```
 
-For detailed examples and integration guides, refer to the [React Example App](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/react-example-app/README.md) and the [Vanilla Example](<[../vanilla-example-app/README.md](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/vanilla-example-app/README.md)>).
+### Connecting to the Wallet
+
+```typescript
+import { getSupraStarkeyConnect } from 'supra-starkey-connect'
+
+const ssc = getSupraStarkeyConnect()
+
+async function connectWallet() {
+  try {
+    const account = await ssc.connect()
+    console.log(`Connected Account: ${account}`)
+  } catch (error) {
+    console.error(`Connection Failed: ${error.message}`)
+  }
+}
+```
+
+For detailed examples and integration guides, refer to the [React Example App](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/react-example-app/README.md), [React Next.js Example App](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/react-nextjs-example/README.md), and the [Vanilla Example App](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/vanilla-example-app/README.md).
 
 ## API
 
@@ -61,6 +113,7 @@ interface SendTransactionParams {
   to: string
   value: string | number
   data?: string
+  chainId?: string
 }
 ```
 
@@ -76,6 +129,66 @@ const transaction = {
 
 const txHash = await ssc.sendTransaction(transaction)
 console.log(`Transaction Hash: ${txHash}`)
+```
+
+#### `Balance`
+
+Represents the balance information.
+
+```typescript
+interface Balance {
+  balance: number
+  formattedBalance: string
+  decimal: number
+  displayUnit: string
+}
+```
+
+**Example:**
+
+```typescript
+const balance = await ssc.getBalance()
+console.log(`Balance: ${balance.formattedBalance} ${balance.displayUnit}`)
+```
+
+#### `SignMessageParams`
+
+Parameters for signing a message.
+
+```typescript
+interface SignMessageParams {
+  message: string
+  nonce?: string
+}
+```
+
+#### `SignMessageResponse`
+
+Represents the response from a signed message.
+
+```typescript
+interface SignMessageResponse {
+  publicKey: string
+  signature: string
+  address: string
+}
+```
+
+#### `RawTxPayload`
+
+Defines the structure of a raw transaction payload.
+
+```typescript
+type RawTxPayload = [
+  string, // sender address
+  number, // sender sequence number
+  string, // module address
+  string, // module name
+  string, // function name
+  TypeTag[], // function type arguments
+  Uint8Array[], // function arguments
+  OptionalTransactionPayloadArgs? // optional transaction payload arguments
+]
 ```
 
 ### Methods
@@ -155,7 +268,7 @@ async getAllAccounts(): Promise<string[] | null>
 
 ```typescript
 const accounts = await ssc.getAllAccounts()
-console.log(`All Accounts: ${accounts?.join(', ')`)
+console.log(`All Accounts: ${accounts?.join(', ')}`)
 ```
 
 #### `getCurrentAccount()`
@@ -226,15 +339,6 @@ console.log(`Transaction Hash: ${txHash}`)
 
 #### `getBalance()`
 
-```typescript
-interface Balance {
-  balance: number
-  formattedBalance: string
-  decimal: number
-  displayUnit: string
-}
-```
-
 Retrieves the balance of the connected account.
 
 ```typescript
@@ -295,35 +399,7 @@ ssc.promptInstall()
 
 #### `signMessage(params: SignMessageParams)`
 
-**Higher Order Component (HoC)**
-
-The `signMessage` function is a **Higher Order Component (HoC)** wrapped around the `signMessageRaw` method. It simplifies and abstracts the signing process provided by the StarKey wallet's window provider. The function prepares the message and nonce internally, making it more convenient to use.
-
-Key responsibilities:
-
-1. Preparing the message into a compatible format.
-2. Generating a nonce (if not provided) using the `generateNonce` utility.
-3. Removing the `0x` prefix from hexadecimal strings using the `remove0xPrefix` utility.
-4. Delegating the signing operation to the `signMessageRaw` method, which directly interacts with the window provider.
-
-```typescript
-/**
- * Parameters for signing a message.
- */
-export interface SignMessageParams {
-  message: string
-  nonce?: string
-}
-
-/**
- * Represents the response from a signed message.
- */
-export interface SignMessageResponse {
-  publicKey: string
-  signature: string
-  address: string
-}
-```
+Signs a message.
 
 ```typescript
 async signMessage(params: SignMessageParams): Promise<{ verified: boolean; response: SignMessageResponse }>
@@ -334,32 +410,18 @@ async signMessage(params: SignMessageParams): Promise<{ verified: boolean; respo
 ```typescript
 try {
   const params = {
-    message: 'Hello, Supra!',
+    message: 'Hello, Supra!'
   }
   const response = await ssc.signMessage(params)
-  console.log(reponse) - outputs: SignMessageResponse
+  console.log(response) // Outputs: SignMessageResponse
 } catch (error) {
   console.error(`Sign Message Error: ${error.message}`)
 }
 ```
 
-### How It Works
-
-1. **Prepares the Message:** Converts the string message to a hex format.
-2. **Handles Nonce:** Generates a random nonce if none is provided by the user.
-3. **Uses Utilities:** Applies `remove0xPrefix` to ensure a clean hex format.
-4. **Delegates to `signMessageRaw`:** Passes the processed message and nonce to the `signMessageRaw` method for signing.
-5. **Returns:** Provides both the response from the signing function and a verification status (if applicable).
-
----
-
 #### `signAndSendTransaction(rawTxPayload: RawTxPayload, value?: string | number): Promise<string>`
 
-**Higher Order Component (HoC)**
-
-The `signAndSendTransaction` function is a **Higher Order Component (HoC)** designed to streamline the process of signing and sending raw transactions through the StarKey wallet. This method ensures that transactions are properly constructed, validated, and dispatched in a type-safe and reliable manner. By abstracting the complexities involved in transaction handling, it provides developers with a seamless interface for interacting with the Supra Blockchain.
-
-**Function Signature:**
+Signs and sends a raw transaction.
 
 ```typescript
 async signAndSendTransaction(
@@ -368,79 +430,22 @@ async signAndSendTransaction(
 ): Promise<string>
 ```
 
-**Parameters:**
-
-- **`rawTxPayload: RawTxPayload`**  
-  An array representing the raw transaction payload. This array must adhere to the `RawTxPayload` type, ensuring that all necessary fields are correctly formatted and typed.
-
-- **`value?: string | number`**  
-  (Optional) The value to send with the transaction. Defaults to an empty string (`''`) if not provided.
-
-**`RawTxPayload` Type Definition:**
-
-```typescript
-type RawTxPayload = [
-  string, // senderAddr
-  number, // senderSequenceNumber
-  string, // moduleAddr
-  string, // moduleName
-  string, // functionName
-  TxnBuilderTypes.TypeTag[], // functionTypeArgs
-  Uint8Array[], // functionArgs
-  OptionalTransactionPayloadArgs? // optionalTransactionPayloadArgs
-]
-
-interface OptionalTransactionPayloadArgs {
-  maxGas?: number
-  gasUnitPrice?: number
-  txExpiryTime?: number
-}
-```
-
 **Example Usage:**
 
 ```typescript
-import { ssc, BCS, RawTxPayload } from 'supra-starkey-connect'
+import { HexString, BCS } from 'supra-starkey-connect'
 
 // Define transaction parameters
-const slotId: bigint = BigInt(4)
-const coins: bigint = BigInt(0)
-const referencePrice: bigint = BigInt(0)
-const txExpiryTime: number = Math.ceil(Date.now() / 1000) + 30 // 30 seconds from now
-
-// Construct the RawTxPayload array example 1
 const rawTxPayload: RawTxPayload = [
-  '0xYourSenderAddress', // senderAddr
-  0, // senderSequenceNumber
-  '0xModuleAddress', // moduleAddr
-  'slot_prediction', // moduleName
-  'create_prediction', // functionName
-  [], // functionTypeArgs
-  [
-    BCS.bcsSerializeU256(slotId), // functionArgs[0]
-    BCS.bcsSerializeUint64(coins), // functionArgs[1]
-    BCS.bcsSerializeUint64(referencePrice) // functionArgs[2]
-  ],
-  { txExpiryTime } // optionalTransactionPayloadArgs ( will fallback to defaults if not set (internal step 3 ) )
-]
-
-// Construct the RawTxPayload array example 2
-const rawTxPayload: RawTxPayload = [
-  account,
+  '0xYourSenderAddress',
   0,
-  '0000000000000000000000000000000000000000000000000000000000000001',
-  'supra_account',
-  'transfer',
+  '0xModuleAddress',
+  'module_name',
+  'function_name',
   [],
-  [
-    new HexString(
-      '0x782608dff0ebf604f708cb4ce8b4ae43c03af7587093579267da4b20df146b40'
-    ).toUint8Array(),
-    BCS.bcsSerializeUint64(100000000)
-  ]
+  [new HexString('0xabcdef').toUint8Array(), BCS.bcsSerializeUint64(100000000)]
 ]
 
-// Sign and send the transaction
 try {
   const txHash = await ssc.signAndSendTransaction(rawTxPayload, '100000000')
   console.log(`Transaction sent successfully! Hash: ${txHash}`)
@@ -449,193 +454,17 @@ try {
 }
 ```
 
-**How It Works on internally:**
-
-1. **Parameter Preparation:**
-
-   - **`rawTxPayload`:**  
-     The function expects a `RawTxPayload` array containing all necessary transaction details. Each element of the array must conform to the specified types, ensuring that the transaction is well-formed.
-
-   - **`value`:**  
-     An optional parameter representing the value to be sent with the transaction. If not provided, it defaults to an empty string. (We don't know what this value is for, ask Starkey)
-
-2. **Validation with Zod:**
-
-   ```typescript
-   validateRawTxPayload(rawTxPayload)
-   ```
-
-   - The `rawTxPayload` is validated against a predefined Zod schema (`RawTxPayloadArraySchema`). This validation ensures that all elements of the payload are correctly typed and adhere to the expected formats.
-
-   - **Zod Schema Used for validating:**
-
-     ```typescript
-     import { z } from 'zod'
-
-     export const OptionalTransactionPayloadArgsSchema = z.object({
-       maxGas: z.number().optional(),
-       gasUnitPrice: z.number().optional(),
-       txExpiryTime: z.number().optional()
-     })
-
-     export const RawTxPayloadArraySchema: z.ZodType<RawTxPayload> = z.tuple([
-       z.string().regex(/^0x[0-9a-fA-F]+$/, 'Invalid senderAddr'),
-       z.number().nonnegative('senderSequenceNumber must be non-negative'),
-       z.string().regex(/^0x[0-9a-fA-F]+$/, 'Invalid moduleAddr'),
-       z.string().min(1, 'moduleName cannot be empty'),
-       z.string().min(1, 'functionName cannot be empty'),
-       z.array(z.instanceof(TxnBuilderTypes.TypeTag)),
-       z.array(z.instanceof(Uint8Array)),
-       OptionalTransactionPayloadArgsSchema.optional()
-     ])
-     ```
-
-   - If validation fails, a `ZodError` is thrown, detailing the discrepancies in the payload structure.
-
-3. **Setting Optional Transaction Payload Arguments:**
-
-   - The function utilizes the `setOptionalTransactionPayloadArgs` utility to ensure that all optional parameters (`maxGas`, `gasUnitPrice`, `txExpiryTime`) are set. If any optional arguments are not provided, default values are assigned.
-
-     ```typescript
-     const updatedRawTxPayload = setOptionalTransactionPayloadArgs(rawTxPayload)
-     ```
-
-4. **Creating Raw Transaction Data:**
-
-   - Upon successful validation, the function calls the provider's `createRawTransactionData` method to generate the raw transaction data string. This method translates the structured payload into a format suitable for blockchain submission.
-
-     ```typescript
-     const rawTransaction = await this.provider.createRawTransactionData(
-       updatedRawTxPayload
-     )
-     ```
-
-5. **Fetching Chain ID:**
-
-   - The function retrieves the current `chainId` using the `getChainId` method. This ID is essential for ensuring that the transaction is broadcasted to the correct blockchain network.
-
-     ```typescript
-     const chainIdResult = await this.getChainId()
-     if (!chainIdResult) {
-       throw new Error('Failed to retrieve chainId.')
-     }
-     const { chainId } = chainIdResult
-     ```
-
-6. **Constructing Transaction Parameters:**
-
-   - A `SendTransactionParams` object is created, encapsulating all necessary details for the transaction, including the sender and recipient addresses, the raw transaction data, the `chainId`, and the optional `value`.
-
-     ```typescript
-     const params: SendTransactionParams = {
-       data: rawTransaction,
-       from: updatedRawTxPayload[0], // senderAddr
-       to: updatedRawTxPayload[2], // moduleAddr
-       chainId,
-       value: value
-     }
-     ```
-
-7. **Sending the Transaction:**
-
-   - The constructed `params` object is passed to the `sendTransaction` method, which dispatches the transaction to the blockchain network.
-
-     ```typescript
-     const txHash = await this.sendTransaction(params)
-     if (!txHash) {
-       throw new Error(
-         'Sending transaction failed, please check wallet for error'
-       )
-     }
-     return txHash
-     ```
-
-8. **Handling Responses and Errors:**
-
-   - If the transaction is successfully sent, the function returns the transaction hash (`txHash`), allowing developers to track the transaction status on the blockchain.
-
-   - In case of failures during any of the steps (validation, data creation, sending), appropriate error messages are logged, and the errors are propagated to be handled by the calling context.
-
----
-
-#### `createRawTransactionData(params: RawTxPayload)`
-
-```typescript
-async createRawTransactionData(params: RawTxPayload): Promise<string>
-```
-
-**Example:**
-
-```typescript
-try {
-  const rawData = await ssc.createRawTransactionData(rawTxPayload)
-  console.log(`Raw Transaction Data:`, rawData)
-} catch (error) {
-  console.error(`Create Raw Transaction Data Error: ${error.message}`)
-}
-```
-
-### Event listeners
-
-#### `onAccountChanged(callback: (accounts: string[]) => void)`
-
-Registers a callback for account changes.
-
-```typescript
-onAccountChanged(callback: (accounts: string[]) => void): void
-```
-
-**Example:**
-
-```typescript
-ssc.onAccountChanged((accounts) => {
-  console.log(`Accounts Changed: ${accounts.join(', ')}`)
-})
-```
-
-#### `onDisconnect(callback: (info: any) => void)`
-
-Registers a callback for disconnect events.
-
-```typescript
-onDisconnect(callback: (info: any) => void): void
-```
-
-**Example:**
-
-```typescript
-ssc.onDisconnect((info) => {
-  console.log('Disconnected:', info)
-})
-```
-
-#### `onNetworkChanged(callback: (networkInfo: { chainId: string }) => void)`
-
-Registers a callback for network changes.
-
-```typescript
-onNetworkChanged(callback: (networkInfo: { chainId: string }) => void): void
-```
-
-**Example:**
-
-```typescript
-ssc.onNetworkChanged((networkInfo) => {
-  console.log(`Network Changed to Chain ID: ${networkInfo.chainId}`)
-})
-```
-
 ## Undocumented Methods
 
-The `supra-starkey-connect` library currently exposes several methods that are **undocumented** by StarKey. These methods have been included based on existing functionality and observed behavior, but their full capabilities and usage details are not officially provided. We are committed to supporting these methods fully once more comprehensive API documentation is available from StarKey.
+The `supra-starkey-connect` library currently exposes some methods that are **undocumented** by StarKey. These methods are included based on existing functionality and observed behavior, with plans for full support once more comprehensive API documentation is available.
 
 ### List of Undocumented Methods
 
-**Note:** Use these methods with caution, as their behavior may change without notice. We recommend monitoring StarKey's official channels for updates and additional documentation regarding these functions.
+**Note:** Use these methods with caution, as their behavior may change without notice.
 
 #### `waitForTransactionWithResult(txHash: string)`
 
-Waits for a transaction with result. This function is currently undocumented by StarKey. We will provide full support once more information is available from StarKey.
+Waits for a transaction with a result.
 
 ```typescript
 async waitForTransactionWithResult(txHash: string): Promise<any>
@@ -652,190 +481,19 @@ try {
 }
 ```
 
-## Utilities
+#### `waitForTransactionCompletion (Alternative to undocumented function)`
 
-In addition to the core functionalities, `supra-starkey-connect` offers a set of utility functions and classes that facilitate common tasks related to hexadecimal string manipulation and transaction payload validation. These utilities enhance the developer experience by providing easy-to-use tools for handling data transformations and ensuring data integrity.
-
-For browser implementations the utils are available at:
-
-```typescript
-windows.sscUtils
-```
-
-### `HexString`
-
-A versatile class for managing hexadecimal strings and converting between hexadecimal strings and byte arrays.
-
-**Features:**
-
-- **Initialization:** Automatically prefixes hexadecimal strings with `0x` if not already present.
-- **Conversion Methods:**
-  - `fromUint8Array(bytes: Uint8Array): HexString`  
-    Creates a `HexString` instance from a `Uint8Array`.
-  - `toUint8Array(): Uint8Array`  
-    Converts the hexadecimal string back to a `Uint8Array`.
-- **String Retrieval:**
-  - `hex(): string`  
-    Retrieves the full hexadecimal string with the `0x` prefix.
-  - `noPrefix(): string`  
-    Retrieves the hexadecimal string without the `0x` prefix.
-
-**Example Usage:**
+Utility function that waits for a transaction to complete by polling its status at regular intervals
+(will be deprecated when `waitForTransactionWithResult` is documented)
 
 ```typescript
-import { HexString } from 'supra-starkey-connect'
-
-// Creating a HexString instance
-const hex = new HexString('abcdef')
-
-// Converting to Uint8Array
-const bytes = hex.toUint8Array()
-console.log(bytes) // Uint8Array(3) [ 171, 205, 239 ]
-
-// Getting hex string with prefix
-console.log(hex.hex()) // '0xabcdef'
-
-// Getting hex string without prefix
-console.log(hex.noPrefix()) // 'abcdef'
-
-// Creating HexString from Uint8Array
-const newHex = HexString.fromUint8Array(new Uint8Array([171, 205, 239]))
-console.log(newHex.hex()) // '0xabcdef'
-```
-
-### `remove0xPrefix`
-
-A utility function that removes the `0x` prefix from a hexadecimal string if it exists. This is particularly useful for normalizing hexadecimal inputs.
-
-**Signature:**
-
-```typescript
-remove0xPrefix(value: string): string
-```
-
-**Example Usage:**
-
-```typescript
-import { remove0xPrefix } from 'supra-starkey-connect'
-
-const cleanHex = remove0xPrefix('0xabcdef') // 'abcdef'
-const sameHex = remove0xPrefix('abcdef') // 'abcdef'
-
-console.log(cleanHex) // 'abcdef'
-console.log(sameHex) // 'abcdef'
-```
-
-### `validateRawTxPayload`
-
-Validates a `RawTxPayload` against the predefined Zod schema to ensure that all required fields are correctly formatted and typed. If the validation fails, it throws a `ZodError` with detailed information about the discrepancies.
-
-**Signature:**
-
-```typescript
-validateRawTxPayload(rawTxPayload: RawTxPayload): void
-```
-
-**Example Usage:**
-
-```typescript
-import { validateRawTxPayload } from 'supra-starkey-connect'
-import { ZodError } from 'zod'
-
-const rawTxPayload = [
-  '0xSenderAddressHere',
-  1,
-  '0xModuleAddressHere',
-  'ModuleName',
-  'FunctionName',
-  [], // functionTypeArgs
-  [new Uint8Array()], // functionArgs
-  { maxGas: 500000, gasUnitPrice: 2, txExpiryTime: 1700000000 }
-]
-
-try {
-  validateRawTxPayload(rawTxPayload)
-  console.log('RawTxPayload is valid.')
-} catch (error) {
-  if (error instanceof ZodError) {
-    console.error('Validation failed:', error.errors)
-  } else {
-    console.error('An unexpected error occurred:', error)
-  }
-}
-```
-
-### `BCS` (Binary Canonical Serialization)
-
-The `BCS` utilities are originally from the **Aptos Core** library but have been **abstracted** to remove the dependency on the now-deprecated Aptos Core library. This ensures that `supra-starkey-connect` remains lightweight and free from deprecated dependencies while providing robust serialization and deserialization capabilities.
-
-`BCS` provides utilities for serializing and deserializing data structures using the Binary Canonical Serialization format. This is essential for preparing data to be sent over the blockchain and interpreting responses.
-
-**Features:**
-
-- **Serialization:** Convert various data types into a binary format suitable for blockchain transactions.
-- **Deserialization:** Parse binary data received from the blockchain into usable data structures.
-
-**Example Usage:**
-
-```typescript
-import { BCS, HexString } from 'supra-starkey-connect'
-
-// Example: Serializing a uint64 value
-const serializedU64 = BCS.bcsSerializeUint64(1311768467750121216)
-console.log(serializedU64) // Uint8Array(8) [0, 239, 205, 171, 120, 86, 52, 18]
-
-// Example: Deserializing a uint64 value
-const deserializer = new BCS.Deserializer(serializedU64)
-const deserializedU64 = deserializer.deserializeU64()
-console.log(deserializedU64) // 1311768467750121216n
-
-// Example: Serializing a string
-const serializedStr = BCS.bcsSerializeStr('Hello, Supra!')
-console.log(serializedStr) // Uint8Array([...])
-
-// Example: Deserializing a string
-const deserializerStr = new BCS.Deserializer(serializedStr)
-const deserializedStr = deserializerStr.deserializeStr()
-console.log(deserializedStr) // "Hello, Supra!"
-
-// Example: Using HexString with BCS
-const hex = new HexString('abcdef')
-const serializedHex = BCS.bcsSerializeBytes(hex.toUint8Array())
-console.log(serializedHex) // Uint8Array([...])
-
-const deserializerHex = new BCS.Deserializer(serializedHex)
-const deserializedHexBytes = deserializerHex.deserializeBytes()
-const deserializedHexString = new HexString(
-  Buffer.from(deserializedHexBytes).toString('hex')
-)
-console.log(deserializedHexString.hex()) // '0xabcdef'
-```
-
----
-
-### `waitForTransactionCompletion`
-
-Waits for a transaction to complete by polling its status at regular intervals. This utility is useful for scenarios where you need to ensure that a transaction has been finalized before proceeding with subsequent operations.
-
-**Signature:**
-
-```typescript
-waitForTransactionCompletion(
+async waitForTransactionCompletion(
   txHash: string,
   network?: string
 ): Promise<TransactionStatus>
 ```
 
-**Parameters:**
-
-- `txHash` (string): The transaction hash to monitor.
-- `network` (string, optional): The network to query (e.g., `'testnet'`, `'mainnet'`). Defaults to `'testnet'`.
-
-**Returns:**
-
-- `Promise<TransactionStatus>`: Resolves to the final transaction status.
-
-**Example Usage:**
+**Example:**
 
 ```typescript
 import {
@@ -860,11 +518,58 @@ waitForTransactionCompletion(txHash, 'mainnet')
   })
 ```
 
----
+## Utilities
 
-### `Sleep`
+### Utility Functions
 
-Delay executing for the specified time.
+The `supra-starkey-connect` library offers a set of utility functions to facilitate common tasks related to hexadecimal string manipulation and transaction payload validation.
+
+#### `HexString`
+
+A versatile class for managing hexadecimal strings and converting between hexadecimal strings and byte arrays.
+
+**Example Usage:**
+
+```typescript
+import { HexString } from 'supra-starkey-connect'
+
+// Creating a HexString instance
+const hex = new HexString('abcdef')
+
+// Converting to Uint8Array
+const bytes = hex.toUint8Array()
+console.log(bytes) // Uint8Array(3) [ 171, 205, 239 ]
+
+// Getting hex string with prefix
+console.log(hex.hex()) // '0xabcdef'
+
+// Getting hex string without prefix
+console.log(hex.noPrefix()) // 'abcdef'
+
+// Creating HexString from Uint8Array
+const newHex = HexString.fromUint8Array(new Uint8Array([171, 205, 239]))
+console.log(newHex.hex()) // '0xabcdef'
+```
+
+#### `remove0xPrefix`
+
+Removes the `0x` prefix from a hexadecimal string if it exists.
+
+**Example Usage:**
+
+```typescript
+import { remove0xPrefix } from 'supra-starkey-connect'
+
+const cleanHex = remove0xPrefix('0xabcdef') // 'abcdef'
+const sameHex = remove0xPrefix('abcdef') // 'abcdef'
+
+console.log(cleanHex) // 'abcdef'
+console.log(sameHex) // 'abcdef'
+```
+
+#### `sleep`
+
+Delays execution for the specified time.
 
 ```typescript
 /**
@@ -873,10 +578,87 @@ Delay executing for the specified time.
  * @param ms - The number of milliseconds to sleep.
  * @returns A promise that resolves after the specified delay.
  */
-export const sleep = (ms: number): Promise<void> => {
-  return new Promise((resolve) => setTimeout(resolve, ms))
+```
+
+**Example Usage:**
+
+```typescript
+import { sleep } from 'supra-starkey-connect'
+
+async function delayedLog() {
+  console.log('Wait for it...')
+  await sleep(2000)
+  console.log('Done!')
+}
+
+delayedLog()
+// Output:
+// Wait for it...
+// (2 seconds later)
+// Done!
+```
+
+### BuilderTypes
+
+Exports `BuilderTypes` for constructing transaction payloads and other blockchain-related data structures.
+
+**Example Usage:**
+
+```typescript
+import { TxnBuilderTypes } from 'supra-starkey-connect'
+
+// Use TxnBuilderTypes to construct transaction payloads
+const typeTag: TxnBuilderTypes.TypeTag = TxnBuilderTypes.TypeTagU64
+```
+
+### Types
+
+The library defines several TypeScript types and interfaces to ensure type safety and clarity in interactions.
+
+#### `TypeTag`
+
+Represents various type tags used in transactions.
+
+```typescript
+export type TypeTag =
+  | TypeTagBool
+  | TypeTagU8
+  | TypeTagU16
+  | TypeTagU32
+  | TypeTagU64
+  | TypeTagU128
+  | TypeTagU256
+  | TypeTagAddress
+  | TypeTagSigner
+  | TypeTagVector
+  | TypeTagStruct
+```
+
+#### `TransactionStatus`
+
+Represents the status of a transaction.
+
+```typescript
+export enum TransactionStatus {
+  Success = 'Success',
+  Failed = 'Failed',
+  Pending = 'Pending'
 }
 ```
+
+#### Additional Types and Interfaces
+
+- **`OptionalTransactionPayloadArgs`**: Represents optional transaction options.
+- **`SendTransactionParams`**: Parameters for sending a transaction.
+- **`Balance`**: Represents balance information.
+- **`SignMessageParams`**: Parameters for signing a message.
+- **`SignMessageResponse`**: Represents the response from a signed message.
+- **`RawTxPayload`**: Defines the structure of a raw transaction payload.
+- **`StarkeyProvider` & `StarkeyProviderWithOff`**: Interfaces defining the Starkey wallet provider functionalities.
+- **`StarkeyObject`**: Represents the Starkey object attached to the window.
+- **`StructTag`**: Defines the structure of a blockchain struct.
+
+For detailed type definitions, refer to the library's [TypeScript Definitions](./src/types.ts).
 
 ## Development
 
@@ -890,9 +672,25 @@ pnpm build
 
 This command will compile the TypeScript code and generate the necessary build outputs in ESM, CJS, and IIFE formats.
 
-## Documentation
+### Running Tests
 
-Comprehensive documentation is available within the codebase and through example applications. For a quick start, refer to the example apps included in this monorepo.
+To run tests for the `supra-starkey-connect` library:
+
+```bash
+pnpm run test
+```
+
+Ensure that all tests pass to maintain code quality and reliability.
+
+## Example Applications
+
+This monorepo includes **four** example applications to demonstrate the integration and usage of `supra-starkey-connect` across different environments:
+
+1. **React Example App (without Next.js)**
+2. **React Next.js Example App**
+3. **Vanilla JavaScript Example App**
+
+Each example app provides unique insights and showcases various features of the `supra-starkey-connect` library. Refer to their respective READMEs for detailed instructions and usage examples.
 
 ## Contributing
 
@@ -901,3 +699,8 @@ Contributions are highly appreciated! Please ensure that your code adheres to th
 ## License
 
 This project is licensed under the [MIT License](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/LICENSE).
+
+```
+
+```
+````

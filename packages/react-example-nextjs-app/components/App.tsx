@@ -7,8 +7,6 @@ import {
 } from 'supra-starkey-connect'
 import type { Balance, RawTxPayload } from 'supra-starkey-connect'
 
-import './App.css'
-
 /**
  * React Application for interacting with the StarKey Supra wallet.
  *
@@ -20,37 +18,35 @@ import './App.css'
  * - Sign and Send Transactions
  * - Interaction Logs
  */
-function App() {
-  const [status, setStatus] = useState('Not Connected')
+const App: React.FC = () => {
+  const [status, setStatus] = useState<string>('Not Connected')
   const [account, setAccount] = useState<string | null>(null)
   const [allAccounts, setAllAccounts] = useState<string[] | null>(null)
   const [network, setNetwork] = useState<string | null>(null)
   const [balance, setBalance] = useState<Balance | null>(null)
   const [version, setVersion] = useState<string | null>(null)
   const [chainId, setChainId] = useState<string | null>(null)
-  const logContainerRef = useRef<HTMLDivElement>(null)
   const [signMessage, setSignMessage] = useState<string>('')
   const [signatureResponse, setSignatureResponse] = useState<any>(null)
   const [signMessageLoading, setSignMessageLoading] = useState<boolean>(false)
-
-  const [logs, setLogs] = useState<string[]>([])
-
-  const [selectedChain, setSelectedChain] = useState<string>('1')
-
   const [rawTxLoading, setRawTxLoading] = useState<boolean>(false)
   const [rawTxHash, setRawTxHash] = useState<string | null>(null)
   const [rawTxError, setRawTxError] = useState<string | null>(null)
-
+  const [logs, setLogs] = useState<string[]>([])
+  const [selectedChain, setSelectedChain] = useState<string>('1')
   const [ssc, setSscInstance] = useState<ReturnType<
     typeof getSupraStarkeyConnect
   > | null>(null)
 
+  const logContainerRef = useRef<HTMLDivElement>(null)
+
+  // Initialize SupraStarkeyConnect instance
   useEffect(() => {
-    // Initialize SupraStarkeyConnect instance
     const sscInstance = getSupraStarkeyConnect()
     setSscInstance(sscInstance)
   }, [])
 
+  // Scroll log container to bottom when logs change
   useEffect(() => {
     if (logContainerRef.current) {
       logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight
@@ -243,10 +239,6 @@ function App() {
       addLog('~~ sendRawTransaction ~~~')
 
       // Example Data:
-      // const slot_id: bigint = BigInt(4)
-      // const coins: bigint = BigInt(0)
-      // const reference_price: bigint = BigInt(0)
-
       const rawTxPayload: RawTxPayload = [
         account,
         0,
@@ -261,20 +253,6 @@ function App() {
           BCS.bcsSerializeUint64(100000000)
         ]
       ]
-
-      // const rawTxPayload: RawTxPayload = [
-      //   account,
-      //   0,
-      //   '0x8943a2c0dc9b08597cbde5d806bf86c69beb7007a4ac401a7f5b520f994e145c',
-      //   'slot_prediction',
-      //   'create_prediction',
-      //   [],
-      //   [
-      //     BCS.bcsSerializeU256(slot_id),
-      //     BCS.bcsSerializeUint64(coins),
-      //     BCS.bcsSerializeUint64(reference_price)
-      //   ]
-      // ]
 
       addLog(`Transaction being sent: ${JSON.stringify(rawTxPayload, null, 2)}`)
 
@@ -292,7 +270,7 @@ function App() {
         )
         const txResult = await waitForTransactionCompletion(txHash)
 
-        return addLog(
+        addLog(
           `Transaction with hash: ${txHash} has completed with status: ${txResult}`
         )
       }
@@ -543,7 +521,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <h1 className="app-header">Supra-starkey-connect - React Example</h1>
+      <h1 className="app-header">Supra-starkey-connect - Next.js Example</h1>
       <div className="wallet-info">
         <p>
           <strong>Status:</strong> {status}

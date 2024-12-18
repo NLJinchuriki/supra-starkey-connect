@@ -1,6 +1,6 @@
 export { BCS } from './helpers/bcs'
 export { HexString } from './helpers/hexString/hexString'
-export { ssc } from './lib'
+export { getSupraStarkeyConnect } from './lib'
 export { validateRawTxPayload } from './helpers/validators'
 export {
   remove0xPrefix,

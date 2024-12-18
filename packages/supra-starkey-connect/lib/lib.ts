@@ -58,8 +58,8 @@ export class SupraStarkeyConnect {
   isStarKeyAvailable(): boolean {
     return (
       typeof window !== 'undefined' &&
-      !!window.starkey &&
-      !!window.starkey.supra
+      !!(window as any).starkey &&
+      !!(window as any).starkey.supra
     )
   }
 
@@ -76,10 +76,11 @@ export class SupraStarkeyConnect {
       )
       return
     }
-    this.provider = window.starkey!.supra
-    this.provider.on('accountChanged', this._handleAccountChanged)
-    this.provider.on('disconnect', this._handleDisconnect)
-    this.provider.on('networkChanged', this._handleNetworkChanged)
+    this.provider = (window as any).starkey.supra
+
+    this.provider!.on('accountChanged', this._handleAccountChanged)
+    this.provider!.on('disconnect', this._handleDisconnect)
+    this.provider!.on('networkChanged', this._handleNetworkChanged)
   }
 
   /**
@@ -231,9 +232,8 @@ export class SupraStarkeyConnect {
   }
 
   /**
-   *
    * Signs a message with the Starkey wallet.
-   * partially documented function. Needs more input from the StarKey team.
+   * Partially documented function. Needs more input from the StarKey team.
    * @param {SignMessageParams} params - The message and nonce to be signed.
    * @returns {Promise<SignMessageResponse>} The signing response containing publicKey, signature, and address.
    */
@@ -259,7 +259,7 @@ export class SupraStarkeyConnect {
   /**
    * Signs and sends a transaction.
    *
-   * @param {RawTxPayloadArray} rawTxPayloadArray - The raw transaction payload array.
+   * @param {RawTxPayload} rawTxPayload - The raw transaction payload.
    * @param {string | number} [value=''] - The value to send with the transaction (optional).
    * @returns {Promise<string>} The transaction hash.
    * @throws Will throw an error if signing or sending fails.
@@ -320,7 +320,7 @@ export class SupraStarkeyConnect {
    * A higher-level signing function that performs the signing and verification logic.
    * This abstracts away the raw signing process and handles Uint8Array conversion.
    * @param {SignMessageParams} params - The message and nonce to be signed.
-   * @returns {Promise<{ verified: boolean, response: SignMessageResponse }>}
+   * @returns {Promise<{ verified: boolean; response: SignMessageResponse }>}
    */
   async signMessage(
     params: SignMessageParams
@@ -354,9 +354,10 @@ export class SupraStarkeyConnect {
     throw new Error('Signing failed, no response received.')
   }
 
-  /**.
+  /**
+   * Creates raw transaction data.
    *
-   * @param {RawTxObject} params - Raw Transaction Data
+   * @param {RawTxPayload} params - Raw Transaction Data
    * @returns {Promise<string>} The raw transaction data.
    * @throws Will throw an error if the provider is not initialized.
    */
@@ -368,7 +369,7 @@ export class SupraStarkeyConnect {
   /**
    * Wait for a transaction by its txhash
    *
-   * @param {string} - Transaction Hash.
+   * @param {string} txHash - Transaction Hash.
    * @returns {Promise<any>} The transaction result.
    * @throws Will throw an error if the provider is not initialized.
    */
@@ -396,8 +397,10 @@ export class SupraStarkeyConnect {
    * @throws Will throw an error if Starkey is not available.
    */
   async getVersion(): Promise<string> {
-    if (!window.starkey) throw new Error('StarKey not available')
-    return await window.starkey.getVersion()
+    if (!this.isStarKeyAvailable()) {
+      throw new Error('StarKey not available')
+    }
+    return await (window as any).starkey.getVersion()
   }
 
   /**
@@ -407,7 +410,7 @@ export class SupraStarkeyConnect {
    * @throws Will throw an error if the provider is not initialized.
    */
   async changeNetwork(chainId: string): Promise<{ chainId: string }> {
-    if (!this.provider) throw new Error('Provider not initialized')
+    if (!this.provider) throw new Error('Provider not initialized.')
     return await this.provider.changeNetwork({ chainId })
   }
 
@@ -415,6 +418,7 @@ export class SupraStarkeyConnect {
    * Prompts the user to install the StarKey Supra wallet.
    */
   promptInstall(): void {
+    if (typeof window === 'undefined') return
     window.open('https://starkey.app/', '_blank')
   }
 
@@ -424,6 +428,9 @@ export class SupraStarkeyConnect {
    */
   onAccountChanged(callback: (accounts: string[]) => void): void {
     this._accountChangedCallbacks.push(callback)
+    if (this.provider) {
+      this.provider.on('accountChanged', callback)
+    }
   }
 
   /**
@@ -432,6 +439,9 @@ export class SupraStarkeyConnect {
    */
   onDisconnect(callback: (info: any) => void): void {
     this._disconnectCallbacks.push(callback)
+    if (this.provider) {
+      this.provider.on('disconnect', callback)
+    }
   }
 
   /**
@@ -440,6 +450,9 @@ export class SupraStarkeyConnect {
    */
   onNetworkChanged(callback: (networkInfo: { chainId: string }) => void): void {
     this._networkChangedCallbacks.push(callback)
+    if (this.provider) {
+      this.provider.on('networkChanged', callback)
+    }
   }
 
   /**
@@ -476,5 +489,23 @@ export class SupraStarkeyConnect {
   }
 }
 
-export const ssc = new SupraStarkeyConnect()
-ssc.init()
+/**
+ * Factory function to get a SupraStarkeyConnect instance.
+ * Returns an instance on the client-side and `null` on the server-side.
+ *
+ * @returns {SupraStarkeyConnect | null} An instance of SupraStarkeyConnect or `null`.
+ */
+export function getSupraStarkeyConnect(): SupraStarkeyConnect | null {
+  // Check if running in the browser
+  if (typeof window !== 'undefined') {
+    window.__SupraStarkeyConnectInstance__ =
+      window.__SupraStarkeyConnectInstance__ || new SupraStarkeyConnect()
+
+    const instance: SupraStarkeyConnect = window.__SupraStarkeyConnectInstance__
+    instance.init()
+    return instance
+  }
+
+  // On server the provider is unavailable
+  return null
+}

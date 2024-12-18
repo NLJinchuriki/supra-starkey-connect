@@ -1,0 +1,21 @@
+{
+    "name": "react-example-nextjs-app",
+    "version": "1.0.9",
+    "private": true,
+    "scripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start"
+    },
+    "dependencies": {
+      "next": "latest",
+      "react": "latest",
+      "react-dom": "latest",
+      "supra-starkey-connect": "workspace:*"
+    },
+    "devDependencies": {
+      "@types/react": "^18.0.28",
+      "@types/node": "^20.4.2",
+      "typescript": "^5.1.6"
+    }
+  }
