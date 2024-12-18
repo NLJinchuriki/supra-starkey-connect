@@ -47,8 +47,6 @@ For an overview of the entire monorepo and example applications, please refer to
 npm install supra-starkey-connect
 ```
 
-````
-
 ### PNPM
 
 ```bash
@@ -703,4 +701,3 @@ This project is licensed under the [MIT License](https://github.com/NLJinchuriki
 ```
 
 ```
-````
