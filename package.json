@@ -1,6 +1,6 @@
 {
   "name": "supra-starkey-monorepo",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "private": true,
   "scripts": {
     "build": "pnpm --filter supra-starkey-connect run build && pnpm --filter react-nextjs-example-app run build && pnpm --filter react-example-app run build && pnpm --filter vanilla-example-app run build",

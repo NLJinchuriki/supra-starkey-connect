@@ -1,8 +1,8 @@
-# Supra Starkey Connect 1.0.9 (Unofficial)
+# Supra Starkey Connect (Unofficial)
 
 **supra-starkey-connect** is a TypeScript-based library that provides a robust and type-safe wrapper around the StarKey Supra wallet provider. It simplifies the integration of Supra Blockchain wallet functionalities into your web applications, enabling seamless interactions such as connecting wallets, sending transactions, signing messages, and handling network changes.
 
-**Version 1.0.9** introduces improvements that resolve specific Server-Side Rendering (SSR) issues and adopts the `getSupraStarkeyConnect` method for enhanced functionality.
+**This version** introduces improvements that resolve specific Server-Side Rendering (SSR) issues and adopts the `getSupraStarkeyConnect` method for enhanced functionality.
 
 For an overview of the entire monorepo and example applications, please refer to the [MONOREPO README](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/README.md).
 
@@ -30,7 +30,7 @@ For an overview of the entire monorepo and example applications, please refer to
 - **Event Handling**: Simplified event listeners for account changes, disconnections, and network changes.
 - **Multiple Build Formats**: Supports ESM, CJS, and Browser (IIFE) builds to cater to different environments.
 - **Comprehensive Methods**: Includes methods for connecting, disconnecting, sending transactions, signing messages, and more.
-- **SSR Enhancements**: Version 1.0.9 addresses specific SSR issues, ensuring better compatibility with server-rendered applications.
+- **SSR Enhancements**: Version 1.0.9 and up addresses specific SSR issues, ensuring better compatibility with server-rendered applications.
 - **Utility Functions**: Provides utilities like `HexString`, `remove0xPrefix`, and `sleep` for common tasks.
 - **BuilderTypes**: Exports `BuilderTypes` for constructing transaction payloads and other blockchain-related data structures.
 - **Undocumented Methods Support**: Exposes additional methods currently undocumented by StarKey, with plans for full support as documentation becomes available.
