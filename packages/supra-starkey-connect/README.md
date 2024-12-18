@@ -656,7 +656,7 @@ export enum TransactionStatus {
 - **`StarkeyObject`**: Represents the Starkey object attached to the window.
 - **`StructTag`**: Defines the structure of a blockchain struct.
 
-For detailed type definitions, refer to the library's [TypeScript Definitions](./lib/types.ts).
+For detailed type definitions, refer to the library's [TypeScript Definitions](https://github.com/NLJinchuriki/supra-starkey-connect/blob/master/packages/supra-starkey-connect/lib/types.ts).
 
 ## Development
 
